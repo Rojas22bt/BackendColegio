@@ -1,11 +1,24 @@
-from BaseDatosColegio.models import Usuario,Rol
+from BaseDatosColegio.models import Usuario,Rol,Privilegio,Permiso
 from rest_framework import serializers
 
+class PrivilegioSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Privilegio
+        fields = ['id','descripcion']
 
 class RolSerializers(serializers.ModelSerializer):
     class Meta:
         model = Rol
         fields = ['id','nombre']
+
+class PermisoDetalleSerializer(serializers.ModelSerializer):
+    rol = RolSerializers(read_only=True)
+    privilegio = PrivilegioSerializers(read_only=True)
+
+    class Meta:
+        model = Permiso
+        fields = ['id', 'rol', 'privilegio', 'estado']
+
 
 class UsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)  # importante para seguridad
