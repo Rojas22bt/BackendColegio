@@ -11,9 +11,9 @@ def crear_usuario(request):
         usuario = serializer.save()
         
         rol_id =int(request.data.get('rol', 0))
-        if rol_id == 1:
+        if rol_id == 2:
             Profesor.objects.create(profesor=usuario, especialidad=request.data.get('especialidad', ''))
-        elif rol_id == 2:
+        elif rol_id == 1:
             Alumno.objects.create(alumno=usuario, matricula=request.data.get('matricula', ''))
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
