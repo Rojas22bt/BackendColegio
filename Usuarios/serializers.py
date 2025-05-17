@@ -1,5 +1,11 @@
-from BaseDatosColegio.models import Usuario
+from BaseDatosColegio.models import Usuario,Rol
 from rest_framework import serializers
+
+
+class RolSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Rol
+        fields = ['id','nombre']
 
 class UsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)  # importante para seguridad
