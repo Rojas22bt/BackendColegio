@@ -1,4 +1,4 @@
-from BaseDatosColegio.models import Usuario,Rol,Privilegio,Permiso
+from BaseDatosColegio.models import Usuario,Rol,Privilegio,Permiso,Alumno,Profesor
 from rest_framework import serializers
 
 class PrivilegioSerializers(serializers.ModelSerializer):
@@ -20,15 +20,45 @@ class PermisoDetalleSerializer(serializers.ModelSerializer):
         fields = ['id', 'rol', 'privilegio', 'estado']
 
 
+class AlumnoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Alumno
+        fields = '__alt__'
+        
+class ProfesorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profesor
+        fields = '__all__'
+
 class UsuarioSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=False)  # importante para seguridad
+    password = serializers.CharField(write_only=True, required=False)
+    alumno = serializers.SerializerMethodField()
+    profesor = serializers.SerializerMethodField()
+    rol_nombre = serializers.CharField(source='rol.nombre', read_only=True)
 
     class Meta:
         model = Usuario
-        fields = ['id', 'ci', 'nombre', 'fecha_nacimiento', 'sexo', 'estado', 'rol', 'password']
+        fields = [
+            'id', 'ci', 'nombre', 'fecha_nacimiento', 'sexo',
+            'estado', 'rol', 'rol_nombre', 'password', 'alumno', 'profesor'
+        ]
         extra_kwargs = {
             'password': {'write_only': True},
         }
+
+    def get_alumno(self, obj):
+        try:
+            alumno = Alumno.objects.get(usuario=obj)
+            return AlumnoSerializer(alumno).data
+        except Alumno.DoesNotExist:
+            return None
+
+    def get_profesor(self, obj):
+        try:
+            profesor = Profesor.objects.get(usuario=obj)
+            return ProfesorSerializer(profesor).data
+        except Profesor.DoesNotExist:
+            return None
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
