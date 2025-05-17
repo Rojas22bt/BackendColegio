@@ -25,5 +25,5 @@ urlpatterns = [
     
     #----URL PARA ACTUALIZAR PERMISOS POR ROL----
     path('actualizarEstadoPermiso/',actualizar_estado_permiso),
-    path('obtenerRolesAgrupados',obtener_permiso_agrupados_por_rol)
+    path('obtenerRolesAgrupados/',obtener_permiso_agrupados_por_rol)
 ]
