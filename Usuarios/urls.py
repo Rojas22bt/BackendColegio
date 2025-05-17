@@ -10,7 +10,7 @@ from .controllers.controller_permiso import (
 urlpatterns = [
     
     path('crearUsuario/', crear_usuario, name='crear_usuario'),
-    path('obtenerUsuario',obtener_usuarios),
+    path('obtenerUsuario/',obtener_usuarios),
     
     #------URL PARA ROL-----
     path('crearRol/', crear_rol, name='crear_rol'),
