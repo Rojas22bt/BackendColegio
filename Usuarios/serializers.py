@@ -23,12 +23,12 @@ class PermisoDetalleSerializer(serializers.ModelSerializer):
 class AlumnoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alumno
-        fields = '__alt__'
+        fields = ['alumno','matricula']
         
 class ProfesorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profesor
-        fields = '__all__'
+        fields = ['profesor','especialidad']
 
 class UsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
