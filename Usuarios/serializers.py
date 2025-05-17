@@ -1,6 +1,9 @@
 from BaseDatosColegio.models import Usuario,Rol,Privilegio,Permiso,Alumno,Profesor
 from rest_framework import serializers
 
+
+#PARA LO QUE TENGA QUE VER CON PERMISOS
+
 class PrivilegioSerializers(serializers.ModelSerializer):
     class Meta:
         model = Privilegio
@@ -19,7 +22,7 @@ class PermisoDetalleSerializer(serializers.ModelSerializer):
         model = Permiso
         fields = ['id', 'rol', 'privilegio', 'estado']
 
-
+#PARA LO QUE TENGA QUE VER CON USUARIO
 class AlumnoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alumno
