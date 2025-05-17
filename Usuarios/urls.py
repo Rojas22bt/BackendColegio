@@ -7,8 +7,15 @@ from .controllers.controller_permiso import (
     actualizar_estado_permiso,obtener_permiso_agrupados_por_rol
 )
 
+from .controllers.controller_auth import login_usuario
+
 urlpatterns = [
     
+    #-----URL LOGIN-----
+    path('login/', login_usuario),
+    
+    
+    #------URL PARA USUARIO--------
     path('crearUsuario/', crear_usuario, name='crear_usuario'),
     path('obtenerUsuario/',obtener_usuarios),
     
