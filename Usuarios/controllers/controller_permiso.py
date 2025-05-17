@@ -108,6 +108,19 @@ def actualizar_estado_permiso(request):
         "data": PermisoDetalleSerializer(permiso).data
     }, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def obtener_permiso_agrupados_por_rol(request):
+    resultados = []
+    roles = Rol.objects.all()
+    for rol in roles:
+        permisos = Permiso.filter(rol=rol)
+        serializer = PermisoDetalleSerializer(permisos, many=True)
+        resultados.append({
+            "rol":rol.nombre,
+            "permisos": serializer.data
+        })
+    return Response(resultados, status=status.HTTP_200_OK)
+
 
 #------CRUD DE ROL--------------------
 

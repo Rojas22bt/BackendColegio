@@ -4,7 +4,7 @@ from .controllers.controller_usuario import crear_usuario
 from .controllers.controller_permiso import (
     crear_rol,actualizar_rol,eliminar_rol,obtener_roles,obtener_roles_activos,
     crear_privilegio,actualizar_privilegio,obtener_privilegio,eliminar_privilegio,
-    actualizar_estado_permiso
+    actualizar_estado_permiso,obtener_permiso_agrupados_por_rol
 )
 
 urlpatterns = [
@@ -24,5 +24,6 @@ urlpatterns = [
     path('eliminarPrivilegio/<int:id>/', eliminar_privilegio),
     
     #----URL PARA ACTUALIZAR PERMISOS POR ROL----
-    path('actualizarEstadoPermiso/',actualizar_estado_permiso)
+    path('actualizarEstadoPermiso/',actualizar_estado_permiso),
+    path('obtenerRolesAgrupados',obtener_permiso_agrupados_por_rol)
 ]
