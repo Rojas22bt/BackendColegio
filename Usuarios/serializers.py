@@ -48,14 +48,14 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
     def get_alumno(self, obj):
         try:
-            alumno = Alumno.objects.get(usuario=obj)
+            alumno = Alumno.objects.get(alumno=obj)
             return AlumnoSerializer(alumno).data
         except Alumno.DoesNotExist:
             return None
 
     def get_profesor(self, obj):
         try:
-            profesor = Profesor.objects.get(usuario=obj)
+            profesor = Profesor.objects.get(profesor=obj)
             return ProfesorSerializer(profesor).data
         except Profesor.DoesNotExist:
             return None
