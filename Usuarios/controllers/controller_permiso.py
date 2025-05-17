@@ -46,7 +46,7 @@ def eliminar_rol(request,id):
         rol = Rol.objects.get(id=id)
         rol.delete()
         return Response(
-            {"mensaje": "Rol elimina"},
+            {"mensaje": "Rol eliminado"},
             status=status.HTTP_200_OK
         )
     except Rol.DoesNotExist:
