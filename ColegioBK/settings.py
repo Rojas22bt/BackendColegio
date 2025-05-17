@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-c+1up$du$6-nvyxrzv(emtk)@1ni!+r1i1^mjh$zyhbt)ck^3-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['backendcolegio-production.up.railway.app', '127.0.0.1', 'localhost']
 AUTH_USER_MODEL= 'BaseDatosColegio.Usuario'
 
 # Application definition
