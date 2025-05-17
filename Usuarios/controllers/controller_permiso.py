@@ -124,23 +124,7 @@ def obtener_permiso_agrupados_por_rol(request):
 
     return Response(resultado, status=status.HTTP_200_OK)
 
-# @api_view(['GET']) OPCIONAL PARA OBTENER LOS PERMISSOS EN EL LOGIN
-# def obtener_permisos_por_nombre_rol(request, nombre_rol):
-#     from BaseDatosColegio.models import Permiso, Rol
-#     from Usuarios.serializers import PermisoDetalleSerializer
 
-#     try:
-#         rol = Rol.objects.get(nombre=nombre_rol)
-#     except Rol.DoesNotExist:
-#         return Response({"mensaje": "Rol no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-
-#     permisos = Permiso.objects.filter(rol=rol)
-#     serializer = PermisoDetalleSerializer(permisos, many=True)
-
-#     return Response({
-#         "rol": rol.nombre,
-#         "permisos": serializer.data
-#     }, status=status.HTTP_200_OK)
 
 
 #------CRUD DE ROL--------------------
