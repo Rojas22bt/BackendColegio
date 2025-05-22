@@ -10,3 +10,8 @@ class CursoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Curso
         fields = ['id','nombre','estado','nivel']
+
+class ParaleloSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Paralelo
+        fields = ['id','descripcion','estado']
