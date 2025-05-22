@@ -25,7 +25,7 @@ def crear_nivel(request):
 def obtener_niveles(request):
     nivel = Nivel.objects.all()
     serializer = NivelSerializer(nivel,many=True)
-    Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
     
 @api_view(['PUT'])
 def actualizar_nivel(request,id):
