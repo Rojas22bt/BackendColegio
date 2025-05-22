@@ -9,4 +9,4 @@ class NivelSerializer(serializers.ModelSerializer):
 class CursoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Curso
-        fields = '__all__'
+        fields = ['id','nombre','estado','nivel']

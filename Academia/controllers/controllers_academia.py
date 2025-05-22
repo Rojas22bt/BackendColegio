@@ -62,6 +62,9 @@ def eliminar_nivel(request,id):
       return Response({"mensaje": "Nivel no encontrado"}, status=status.HTTP_404_NOT_FOUND)   
 
 @api_view(['POST'])
+
+
+#CRUD DE CURSO
 def crear_curso(request):
     serializer = CursoSerializer(data=request.data)
     if serializer.is_valid():
@@ -75,8 +78,39 @@ def crear_curso(request):
             "mensaje": "Error al crear el curso",
             "errores": serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
-    
-    
+
+@api_view(['PUT'])
+def actualizar_curso(request,id):
+    try:
+        curso = Curso.objects.get(id=id)
+    except Curso.DoesNotExist:
+        return Response(
+            {"mensaje": "Curso no encontrado"},
+            status=status.HTTP_404_NOT_FOUND
+            )
+    serializer = CursoSerializer(curso, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            "mensaje": "Curso actualizado correctamente",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+    return Response({
+        "mensaje": "Error al actualizar el curso",
+        "errores": serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def eliminar_curso(request,id):
+    try:
+        curso = Curso.objects.get(id=id)
+        curso.delete()
+        return Response(
+            {"mensaje": "Curso eliminado"},
+            status=status.HTTP_200_OK
+        )
+    except Curso.DoesNotExist:
+      return Response({"mensaje": "Curso no encontrado"}, status=status.HTTP_404_NOT_FOUND)   
 
 @api_view(['GET'])
 def obtener_cursos(request):
