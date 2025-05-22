@@ -7,6 +7,13 @@ from .controllers.controllers_academia import (
     crear_horario,obtener_horarios,actualizar_horario,eliminar_horario
 )
 
+from .controllers.controllers_detalle_curso import (
+    crear_detalle_curso_materia,obtener_detalle_curso_materia,
+    actualizar_detalle_curso_materia,eliminar_detalle_curso_materia,
+    crear_detalle_curso_paralelo,obtener_detalle_curso_paralelo,
+    actualizar_detalle_curso_paralelo,eliminar_detalle_curso_paralelo
+)
+
 urlpatterns = [
     path('crear-curso/',crear_curso),
     path('obtener-cursos/',obtener_cursos),
@@ -31,5 +38,15 @@ urlpatterns = [
     path('crear-horario/',crear_horario),
     path('obtener-horarios/',obtener_horarios),
     path('actualizar-horario/<int:id>/',actualizar_horario),
-    path('eliminar-horario/<int:id>/',eliminar_horario)
+    path('eliminar-horario/<int:id>/',eliminar_horario),
+    
+    path('crear-detalle-curso-materia/',crear_detalle_curso_materia),
+    path('obtener-detalle-curso-materia/',obtener_detalle_curso_materia),
+    path('actualizar-detalle-curso-materia/<int:id>/',actualizar_detalle_curso_materia),
+    path('eliminar-detalle-curso-materia/<int:id>/',eliminar_detalle_curso_materia),
+    
+    path('crear-detalle-curso-paralelo/',crear_detalle_curso_paralelo),
+    path('obtener-detalle-curso-paralelo/',obtener_detalle_curso_paralelo),
+    path('actualizar-detalle-curso-paralelo/<int:id>/',actualizar_detalle_curso_paralelo),
+    path('eliminar-detalle-curso-paralelo/<int:id>/',eliminar_detalle_curso_paralelo)
 ]
