@@ -4,7 +4,7 @@ from rest_framework import serializers
 class NivelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nivel
-        fields = '__all__'
+        fields = ['id','nombre','estado']
 
 class CursoSerializer(serializers.ModelSerializer):
     class Meta:
