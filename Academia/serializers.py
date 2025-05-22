@@ -1,4 +1,4 @@
-from BaseDatosColegio.models import Curso,Paralelo,Nivel,Horario,Materia7
+from BaseDatosColegio.models import Curso,Paralelo,Nivel,Horario,Materia
 from rest_framework import serializers
 
 class NivelSerializer(serializers.ModelSerializer):
