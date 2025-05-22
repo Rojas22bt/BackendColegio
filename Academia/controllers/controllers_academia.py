@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from BaseDatosColegio.models import Curso,Nivel,Paralelo
-from Academia.serializers import CursoSerializer,NivelSerializer,ParaleloSerializer
+from BaseDatosColegio.models import Curso,Nivel,Paralelo,Horario,Materia
+from Academia.serializers import CursoSerializer,NivelSerializer,ParaleloSerializer,HorarioSerializer,MateriaSerializer
 
 #CRUD DE NIVEL
 
@@ -168,4 +168,109 @@ def eliminar_paralelo(request,id):
 def obtener_paralelos(request):
     paralelo = Paralelo.objects.all()
     serializer = ParaleloSerializer(paralelo, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+#CRUD HORARIO
+@api_view(['POST'])
+def crear_horario(request):
+    serializer = HorarioSerializer(data=request.data)
+    if serializer.is_valid():
+        horario = serializer.save()
+        return Response({
+            "mensaje": "Horario creado correctamente",
+            "data": HorarioSerializer(horario).data
+        }, status=status.HTTP_201_CREATED)
+
+    return Response({
+            "mensaje": "Error al crear el horario",
+            "errores": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+def actualizar_horario(request,id):
+    try:
+        horario = Horario.objects.get(id=id)
+    except Horario.DoesNotExist:
+        return Response(
+            {"mensaje": "Horario no encontrado"},
+            status=status.HTTP_404_NOT_FOUND
+            )
+    serializer = HorarioSerializer(horario, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            "mensaje": "Horario actualizado correctamente",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+    return Response({
+        "mensaje": "Error al actualizar el horario",
+        "errores": serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['DELETE'])
+def eliminar_horario(request,id):
+    try:
+        horario = Horario.objects.get(id=id)
+        horario.delete()
+        return Response(
+            {"mensaje": "Horario eliminado"},
+            status=status.HTTP_200_OK
+        )
+    except Horario.DoesNotExist:
+      return Response({"mensaje": "Horario no encontrado"}, status=status.HTTP_404_NOT_FOUND)   
+@api_view(['GET'])
+def obtener_horarios(request):
+    horario = Horario.objects.all()
+    serializer = HorarioSerializer(horario, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+#CRUD MATERIA
+@api_view(['POST'])
+def crear_materia(request):
+    serializer = MateriaSerializer(data=request.data)
+    if serializer.is_valid():
+        materia = serializer.save()
+        return Response({
+            "mensaje": "Materia creada correctamente",
+            "data": MateriaSerializer(materia).data
+        }, status=status.HTTP_201_CREATED)
+
+    return Response({
+            "mensaje": "Error al crear la materia",
+            "errores": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['PUT'])
+def actualizar_materia(request,id):
+    try:
+        materia = Materia.objects.get(id=id)
+    except Materia.DoesNotExist:
+        return Response(
+            {"mensaje": "Materia no encontrada"},
+            status=status.HTTP_404_NOT_FOUND
+            )
+    serializer = MateriaSerializer(materia, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            "mensaje": "Materia actualizada correctamente",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+    return Response({
+        "mensaje": "Error al actualizar la materia",
+        "errores": serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['DELETE'])
+def eliminar_materia(request,id):
+    try:
+        materia = Materia.objects.get(id=id)
+        materia.delete()
+        return Response(
+            {"mensaje": "Materia eliminada"},
+            status=status.HTTP_200_OK
+        )
+    except Materia.DoesNotExist:
+      return Response({"mensaje": "Materia no encontrada"}, status=status.HTTP_404_NOT_FOUND)   
+@api_view(['GET'])
+def obtener_materias(request):
+    materia = Materia.objects.all()
+    serializer = MateriaSerializer(materia, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

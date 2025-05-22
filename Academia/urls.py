@@ -2,7 +2,9 @@ from django.urls import path
 from .controllers.controllers_academia import (
     crear_curso,obtener_cursos,actualizar_curso,eliminar_curso,
     crear_nivel,obtener_niveles,actualizar_nivel,eliminar_nivel,
-    crear_paralelo,obtener_paralelos,actualizar_paralelo,eliminar_paralelo
+    crear_paralelo,obtener_paralelos,actualizar_paralelo,eliminar_paralelo,
+    crear_materia,obtener_materias,actualizar_materia,eliminar_materia,
+    crear_horario,obtener_horarios,actualizar_horario,eliminar_horario
 )
 
 urlpatterns = [
@@ -19,5 +21,15 @@ urlpatterns = [
     path('crear-nivel/',crear_nivel),
     path('obtener-niveles/',obtener_niveles),
     path('actualizar-nivel/<int:id>/',actualizar_nivel),
-    path('eliminar-nivel/<int:id>/',eliminar_nivel)
+    path('eliminar-nivel/<int:id>/',eliminar_nivel),
+    
+    path('crear-materia/',crear_materia),
+    path('obtener-materias/',obtener_materias),
+    path('actualizar-materia/<int:id>/',actualizar_materia),
+    path('eliminar-materia/<int:id>/',eliminar_materia),
+    
+    path('crear-horario/',crear_horario),
+    path('obtener-horarios/',obtener_horarios),
+    path('actualizar-horario/<int:id>/',actualizar_horario),
+    path('eliminar-horario/<int:id>/',eliminar_horario)
 ]

@@ -15,3 +15,13 @@ class ParaleloSerializer(serializers.ModelSerializer):
     class Meta:
         model = Paralelo
         fields = ['id','descripcion','estado']
+
+class HorarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Horario
+        fields = ['id','hora_inicial','hora_final']
+
+class MateriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Materia
+        fields = ['id','nombre','descripcion','estado']
