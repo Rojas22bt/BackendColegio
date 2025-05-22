@@ -14,6 +14,9 @@ def login_usuario(request):
     try:
         usuario = Usuario.objects.get(ci=ci)
         
+        if not usuario.estado:
+            return Response({'mensaje': 'Usuario no está activado'}, status=status.HTTP_403_FORBIDDEN)
+        
         if not usuario.check_password(password):
             return Response({'mensaje': 'Contraseña incorrecta'}, status=status.HTTP_401_UNAUTHORIZED)
         

@@ -24,3 +24,45 @@ def obtener_usuarios(request):
     usuarios = Usuario.objects.all()
     serializer = UsuarioSerializer(usuarios,many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+def actualizar_usuario(request, id):
+    try:
+        usuario = Usuario.objects.get(id=id)
+    except Usuario.DoesNotExist:
+        return Response({"mensaje": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = UsuarioSerializer(usuario, data=request.data)
+    if serializer.is_valid():
+        usuario_actualizado = serializer.save()
+
+        rol_id = int(request.data.get('rol', 0))
+        if rol_id == 1:
+            alumno, _ = Alumno.objects.get_or_create(alumno=usuario_actualizado)
+            alumno.matricula = request.data.get('matricula', alumno.matricula)
+            alumno.save()
+        elif rol_id == 2:
+            profesor, _ = Profesor.objects.get_or_create(profesor=usuario_actualizado)
+            profesor.especialidad = request.data.get('especialidad', profesor.especialidad)
+            profesor.save()
+
+        return Response({
+            "mensaje": "Usuario actualizado correctamente",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+
+    return Response({
+        "mensaje": "Error al actualizar el usuario",
+        "errores": serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+def eliminar_usuario(request, id):
+    try:
+        usuario = Usuario.objects.get(id=id)
+        usuario.delete()
+        return Response({"mensaje": "Usuario eliminado correctamente"}, status=status.HTTP_200_OK)
+    except Usuario.DoesNotExist:
+        return Response({"mensaje": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
