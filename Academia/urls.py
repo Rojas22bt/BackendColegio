@@ -49,7 +49,7 @@ urlpatterns = [
     path('crear-detalle-curso-paralelo/',crear_detalle_curso_paralelo),
     path('obtener-detalle-curso-paralelo/',obtener_detalle_curso_paralelo),
     path('actualizar-detalle-curso-paralelo/<int:id>/',actualizar_detalle_curso_paralelo),
-    path('eliminar-detalle-curso-paralelo/<int:id>/',eliminar_detalle_curso_paralelo),
+    path('eliminar-detalle-curso-paralelo/',eliminar_detalle_curso_paralelo),
     path('obtener/',obtener_cursos_con_paralelos_y_materias),
     
     
