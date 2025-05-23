@@ -1,10 +1,17 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from BaseDatosColegio.models import Usuario,Rol,Permiso
+from BaseDatosColegio.models import Usuario,Rol,Permiso,Bitacora
 from Usuarios.serializers import UsuarioSerializer,PermisoDetalleSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 @api_view(['POST'])
 def login_usuario(request):
@@ -26,6 +33,14 @@ def login_usuario(request):
         rol = usuario.rol
         permisos = Permiso.objects.filter(rol=rol)
         serializer2 = PermisoDetalleSerializer(permisos, many=True)
+
+        # Bitácora
+        ip = get_client_ip(request)
+        Bitacora.objects.create(
+            usuario=usuario,
+            accion="Inicio de sesión",
+            ip=ip
+        )
 
         return Response({
             'refresh': str(refresh),

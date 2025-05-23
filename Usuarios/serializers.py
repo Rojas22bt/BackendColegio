@@ -1,6 +1,11 @@
-from BaseDatosColegio.models import Usuario,Rol,Privilegio,Permiso,Alumno,Profesor
+from BaseDatosColegio.models import Usuario,Rol,Privilegio,Permiso,Alumno,Profesor,Bitacora
 from rest_framework import serializers
 
+#BITACORA
+class BitacoraSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Bitacora
+        fields = [ 'id','usuario','fecha','hora','ip','accion']
 
 #PARA LO QUE TENGA QUE VER CON PERMISOS
 
