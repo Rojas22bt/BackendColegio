@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from BaseDatosColegio.models import DescripcionMateria,Profesor,Materia,CursoParalelo,Horario,HorarioMateria
-from Academia.serializers import DescripcionMateriaSerializer
+from BaseDatosColegio.models import DescripcionMateria,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,Curso,Paralelo
+from Academia.serializers import DescripcionMateriaSerializer,DescripcionHorarioSerializer
 
 @api_view(['POST'])
 def crear_descripcion_materia(request):
@@ -11,3 +11,46 @@ def crear_descripcion_materia(request):
         serializer.save()
         return Response({"mensaje":"registro exitoso","data":serializer.data},status=status.HTTP_200_OK)  
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def crear_descripcion_completa(request):
+    # 1. Crear la DescripcionMateria
+    data1 = {
+        "profesor": request.data.get("profesor"),
+        "materia": request.data.get("materia")
+    }
+    serializer1 = DescripcionMateriaSerializer(data=data1)
+
+    if serializer1.is_valid():
+        descripcion_materia = serializer1.save()  # ya tienes la instancia guardada
+
+        # 2. Obtener o crear el CursoParalelo
+        curso_id = request.data.get("curso")
+        paralelo_id = request.data.get("paralelo")
+        try:
+            curso = Curso.objects.get(id=curso_id)
+            paralelo = Paralelo.objects.get(id=paralelo_id)
+        except (Curso.DoesNotExist, Paralelo.DoesNotExist):
+            return Response({"error": "Curso o Paralelo no encontrado"}, status=status.HTTP_400_BAD_REQUEST)
+
+        curso_paralelo, _ = CursoParalelo.objects.get_or_create(curso=curso, paralelo=paralelo)
+
+        # 3. Crear el HorarioMateria
+        data2 = {
+            "curso_paralelo": curso_paralelo.id,
+            "descripcion_materia": descripcion_materia.id,
+            "horario": request.data.get("horario")
+        }
+
+        serializer2 = DescripcionHorarioSerializer(data=data2)
+        if serializer2.is_valid():
+            serializer2.save()
+            return Response({
+                "descripcion_materia": serializer1.data,
+                "horario_materia": serializer2.data
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer2.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        return Response(serializer1.errors, status=status.HTTP_400_BAD_REQUEST)
