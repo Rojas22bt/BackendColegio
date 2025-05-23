@@ -129,7 +129,7 @@ def actualizar_detalle_curso_paralelo(request,id):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
-def eliminar_detalle_curso_paralelo(request,id):
+def eliminar_detalle_curso_paralelo(request):
     paralelo_id = request.data.get('paralelo')
     curso_id = request.data.get('curso')
 
