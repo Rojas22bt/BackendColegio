@@ -130,8 +130,9 @@ def actualizar_detalle_curso_paralelo(request,id):
 
 @api_view(['DELETE'])
 def eliminar_detalle_curso_paralelo(request):
-    paralelo_id = request.data.get('paralelo')
+    print(request.data)
     curso_id = request.data.get('curso')
+    paralelo_id = request.data.get('paralelo')
 
     if not paralelo_id or not curso_id:
         return Response({"mensaje": "Se requieren 'paralelo' y 'curso'"}, status=status.HTTP_400_BAD_REQUEST)
