@@ -53,6 +53,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     fecha_nacimiento = models.DateField(default=timezone.now)
     sexo = models.CharField(max_length=1, null=False)
     estado = models.BooleanField(default=True)
+    telefono = models.CharField(max_length=15,default='12345678')
     rol = models.ForeignKey(Rol, on_delete=models.CASCADE, null=True)
 
     is_active = models.BooleanField(default=True)
