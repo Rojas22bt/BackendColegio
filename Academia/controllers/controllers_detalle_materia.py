@@ -6,30 +6,26 @@ from Academia.serializers import DescripcionMateriaSerializer,DescripcionHorario
 
 @api_view(['GET'])
 def obtener_descripcion_completa(request):
-    descripciones = DescripcionMateria.objects.all()
+    # Usamos select_related para evitar consultas adicionales por cada descripción
+    descripciones = DescripcionMateria.objects.select_related("profesor", "materia").all()
     resultado = []
 
     for descripcion in descripciones:
+        # Obtenemos los horarios relacionados
         horarios = HorarioMateria.objects.filter(descripcion_materia=descripcion)
+
+        # Serializamos la descripción y los horarios
         descripcion_serializada = DescripcionMateriaSerializer(descripcion).data
         horarios_serializados = DescripcionHorarioSerializer(horarios, many=True).data
 
-        # Extraer ID del profesor y materia desde el diccionario serializado
-        profesor_id = descripcion_serializada.get("profesor")
-        materia_id = descripcion_serializada.get("materia")
+        # Agregamos los nombres legibles del profesor y la materia
+        profesor = descripcion.profesor
+        materia = descripcion.materia
 
-        try:
-            profesor = Profesor.objects.get(id=profesor_id)
-            descripcion_serializada["profesor_nombre"] = profesor.nombre
-        except Profesor.DoesNotExist:
-            descripcion_serializada["profesor_nombre"] = "Profesor no encontrado"
+        descripcion_serializada["profesor_nombre"] = profesor.nombre if profesor else "No asignado"
+        descripcion_serializada["materia_nombre"] = materia.nombre if materia else "No asignada"
 
-        try:
-            materia = Materia.objects.get(id=materia_id)
-            descripcion_serializada["materia_nombre"] = materia.nombre
-        except Materia.DoesNotExist:
-            descripcion_serializada["materia_nombre"] = "Materia no encontrada"
-
+        # Añadimos al resultado
         resultado.append({
             "descripcion": descripcion_serializada,
             "horarios": horarios_serializados
