@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from BaseDatosColegio.models import DescripcionMateria,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,Curso,Paralelo
 from Academia.serializers import DescripcionMateriaSerializer,DescripcionHorarioSerializer,MateriaSerializer
+from Usuarios.serializers import ProfesorSerializer
 
 @api_view(['GET'])
 def obtener_descripcion_completa(request):
@@ -15,11 +16,11 @@ def obtener_descripcion_completa(request):
         horarios_serializados = DescripcionHorarioSerializer(horarios, many=True).data
 
         #agregarNombreProfesor
-        # profesor = Profesor.objects.get(id=descripcion_serializada.profesor)
-        # descripcion_serializada["profesor_nombre"] = profesor.nombre
+        profesor_id = descripcion_serializada["profesor"]
+        profesor = Profesor.objects.get(id=profesor_id)
+        obtenerProfesor = ProfesorSerializer(profesor).data
+        descripcion_serializada["profesor_nombre"] = obtenerProfesor["nombre"]
         #agregamosNombreMateria
-        # materia = Materia.objects.get(id=descripcion_serializada.materia)
-        # descripcion_serializada["materia_nombre"] = materia.nombre
         materia_id = descripcion_serializada["materia"]
         materia = Materia.objects.get(id=materia_id)
         obtenerMateria = MateriaSerializer(materia).data
