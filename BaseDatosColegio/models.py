@@ -180,6 +180,7 @@ class Materia(models.Model):
 class Horario(models.Model):
     hora_inicial = models.TimeField()
     hora_final = models.TimeField()
+    estado = models.BooleanField(null=True)
 
     def __str__(self):
         return f"{self.hora_inicial} - {self.hora_final}"
