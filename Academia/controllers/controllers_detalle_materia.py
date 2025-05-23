@@ -21,7 +21,8 @@ def obtener_descripcion_completa(request):
         # materia = Materia.objects.get(id=descripcion_serializada.materia)
         # descripcion_serializada["materia_nombre"] = materia.nombre
         materia_id = descripcion_serializada["materia"]
-        obtenerMateria = MateriaSerializer(Materia.objects.get(id=materia_id),many=True).data
+        materia = Materia.objects.get(id=materia_id)
+        obtenerMateria = MateriaSerializer(materia,many=True).data
         descripcion_serializada["materia_nombre"] = obtenerMateria["nombre"]
 
         resultado.append({
