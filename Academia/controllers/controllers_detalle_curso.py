@@ -90,18 +90,35 @@ def eliminar_detalle_curso_materia(request):
 #CRUD DE DETALLE CURSO PARALELO
 @api_view(['POST'])
 def crear_detalle_curso_paralelo(request):
-    serializer = CursoParaleloSerializer(data=request.data)
-    if serializer.is_valid():
-        detalle_curso = serializer.save()
+    curso_id = request.data.get('curso')
+    paralelos = request.data.get('paralelos', [])
+
+    if not curso_id or not isinstance(paralelos, list):
         return Response({
-            "mensaje": "Detalle curso creado correctamente",
-            "data": CursoParaleloSerializer(detalle_curso).data
-        }, status=status.HTTP_201_CREATED)
-    return Response({
-            "mensaje": "Error al crear el detalle curso",
-            "errores": serializer.errors
+            "mensaje": "Datos incompletos o inválidos. Se espera 'curso' y una lista de 'paralelos'."
         }, status=status.HTTP_400_BAD_REQUEST)
 
+    resultados = []
+    for paralelo_id in paralelos:
+        data = {
+            "curso": curso_id,
+            "paralelo": paralelo_id
+        }
+        serializer = CursoParaleloSerializer(data=data)
+        if serializer.is_valid():
+            detalle = serializer.save()
+            resultados.append(CursoParaleloSerializer(detalle).data)
+        else:
+            return Response({
+                "mensaje": f"Error al crear curso-paralelo con paralelo_id={paralelo_id}",
+                "errores": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({
+        "mensaje": "Todos los paralelos fueron asignados correctamente al curso.",
+        "data": resultados
+    }, status=status.HTTP_201_CREATED)
+    
 @api_view(['GET'])
 def obtener_detalle_curso_paralelo(request):
     detalle_curso = CursoParalelo.objects.all()
