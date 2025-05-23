@@ -14,6 +14,13 @@ def obtener_descripcion_completa(request):
         descripcion_serializada = DescripcionMateriaSerializer(descripcion).data
         horarios_serializados = DescripcionHorarioSerializer(horarios, many=True).data
 
+        #agregarNombreProfesor
+        profesor = Profesor.objects.get(id=descripcion.profesor)
+        descripcion_serializada["profesor_nombre"] = profesor.nombre
+        #agregamosNombreMateria
+        materia = Materia.objects.get(id=descripcion.materia)
+        descripcion_serializada["materia_nombre"] = materia.nombre
+
         resultado.append({
             "descripcion": descripcion_serializada,
             "horarios": horarios_serializados
