@@ -24,7 +24,7 @@ def obtener_descripcion_completa(request):
         resultado.append({
             "descripcion": descripcion_serializada,
             "horarios": horarios_serializados,
-            "id":descripcion_serializada.materia
+            "id":descripcion_serializada["materia"] 
         })
 
     return Response(resultado, status=status.HTTP_200_OK)
