@@ -19,7 +19,7 @@ class ParaleloSerializer(serializers.ModelSerializer):
 class HorarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Horario
-        fields = ['id','hora_inicial','hora_final']
+        fields = ['id','hora_inicial','hora_final','estado']
 
 class MateriaSerializer(serializers.ModelSerializer):
     class Meta:
