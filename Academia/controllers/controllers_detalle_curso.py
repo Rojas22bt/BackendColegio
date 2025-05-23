@@ -46,31 +46,20 @@ def obtener_detalle_curso_materia(request):
     serializer = MateriaAsignadaSerializer(detalle_curso, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-@api_view(['PUT'])
+
+@api_view(['POST'])
 def actualizar_detalle_curso_materia(request):
-    materia_id = request.data.get('materia')
-    curso_id = request.data.get('curso')
-
-    if not materia_id or not curso_id:
-        return Response({"mensaje": "Se requieren 'materia' y 'curso'"}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        detalle_curso = MateriaAsignada.objects.get(materia_id=materia_id, curso_id=curso_id)
-    except MateriaAsignada.DoesNotExist:
-        return Response({"mensaje": "Detalle curso no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-
-    serializer = MateriaAsignadaSerializer(detalle_curso, data=request.data, partial=True)
+    serializer = MateriaAsignadaSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        detalle_curso = serializer.save()
         return Response({
-            "mensaje": "Detalle curso actualizado correctamente",
-            "data": serializer.data
-        }, status=status.HTTP_200_OK)
-
+            "mensaje": "Detalle curso creado correctamente",
+            "data": MateriaAsignadaSerializer(detalle_curso).data
+        }, status=status.HTTP_201_CREATED)
     return Response({
-        "mensaje": "Error al actualizar el detalle curso",
-        "errores": serializer.errors
-    }, status=status.HTTP_400_BAD_REQUEST)
+            "mensaje": "Error al crear el detalle curso",
+            "errores": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
 def eliminar_detalle_curso_materia(request):
@@ -125,26 +114,19 @@ def obtener_detalle_curso_paralelo(request):
     serializer = CursoParaleloSerializer(detalle_curso, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-@api_view(['PUT'])
+@api_view(['POST'])
 def actualizar_detalle_curso_paralelo(request,id):
-    try:
-        detalle_curso = CursoParalelo.objects.get(id=id)
-    except CursoParalelo.DoesNotExist:
-        return Response(
-            {"mensaje": "Detalle curso no encontrado"},
-            status=status.HTTP_404_NOT_FOUND
-            )
-    serializer = CursoParaleloSerializer(detalle_curso, data=request.data)
+    serializer = CursoParaleloSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        detalle_curso = serializer.save()
         return Response({
-            "mensaje": "Detalle curso actualizado correctamente",
-            "data": serializer.data
-        }, status=status.HTTP_200_OK)
+            "mensaje": "Detalle curso creado correctamente",
+            "data": CursoParaleloSerializer(detalle_curso).data
+        }, status=status.HTTP_201_CREATED)
     return Response({
-        "mensaje": "Error al actualizar el detalle curso",
-        "errores": serializer.errors
-    }, status=status.HTTP_400_BAD_REQUEST)
+            "mensaje": "Error al crear el detalle curso",
+            "errores": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
 def eliminar_detalle_curso_paralelo(request,id):
