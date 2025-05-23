@@ -37,7 +37,7 @@ def actualizar_usuario(request, id):
         usuario_actualizado = serializer.save()
 
         rol_id = int(request.data.get('rol', 0))
-        if rol_id == 1:
+        if rol_id == 5:
             alumno, _ = Alumno.objects.get_or_create(alumno=usuario_actualizado)
             alumno.matricula = request.data.get('matricula', alumno.matricula)
             alumno.save()
