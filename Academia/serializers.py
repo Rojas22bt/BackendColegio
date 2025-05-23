@@ -44,4 +44,4 @@ class DescripcionMateriaSerializer(serializers.ModelSerializer):
 class DescripcionHorarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = HorarioMateria
-        fields = ['id','curso_paralelo','descripcion_materia','horario']
+        fields = ['id','curso_paralelo','descripcion_materia','horario','nombre_curso','descripcion_paralelo']
