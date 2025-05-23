@@ -39,4 +39,4 @@ class MateriaAsignadaSerializer(serializers.ModelSerializer):
 class DescripcionMateriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = DescripcionMateria
-        fields = ['profesor','materia']
+        fields = ['id','profesor','materia']
