@@ -7,17 +7,38 @@ from Academia.serializers import MateriaAsignadaSerializer,CursoParaleloSerializ
 #CRUD DE DETALLE CURSO MATERIA
 @api_view(['POST'])
 def crear_detalle_curso_materia(request):
-    serializer = MateriaAsignadaSerializer(data=request.data)
-    if serializer.is_valid():
-        detalle_curso = serializer.save()
+    curso_id = request.data.get('curso')
+    materias = request.data.get('materias', [])
+
+    if not curso_id or not materias:
+        return Response({"mensaje": "Faltan datos: 'curso' y 'materias'"}, status=status.HTTP_400_BAD_REQUEST)
+
+    creados = []
+    errores = []
+
+    for materia_id in materias:
+        serializer = MateriaAsignadaSerializer(data={
+            "curso": curso_id,
+            "materia": materia_id
+        })
+        if serializer.is_valid():
+            detalle = serializer.save()
+            creados.append(MateriaAsignadaSerializer(detalle).data)
+        else:
+            errores.append({f"materia_id {materia_id}": serializer.errors})
+
+    if errores:
         return Response({
-            "mensaje": "Detalle curso creado correctamente",
-            "data": MateriaAsignadaSerializer(detalle_curso).data
-        }, status=status.HTTP_201_CREATED)
+            "mensaje": "Algunas asignaciones no se pudieron crear",
+            "creados": creados,
+            "errores": errores
+        }, status=status.HTTP_207_MULTI_STATUS)
+
     return Response({
-            "mensaje": "Error al crear el detalle curso",
-            "errores": serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+        "mensaje": "Todas las asignaciones creadas correctamente",
+        "data": creados
+    }, status=status.HTTP_201_CREATED)
+
 
 @api_view(['GET'])
 def obtener_detalle_curso_materia(request):
