@@ -134,13 +134,13 @@ def eliminar_detalle_curso_paralelo(request):
     curso_id = request.data.get('curso')
 
     if not paralelo_id or not curso_id:
-        return Response({"mensaje": "Se requieren 'materia' y 'curso'"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"mensaje": "Se requieren 'paralelo' y 'curso'"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         detalle_curso = CursoParalelo.objects.get(paralelo=paralelo_id, curso=curso_id)
         detalle_curso.delete()
         return Response({"mensaje": "Detalle curso eliminado"}, status=status.HTTP_200_OK)
-    except MateriaAsignada.DoesNotExist:
+    except CursoParalelo.DoesNotExist:
         return Response({"mensaje": "Detalle curso no encontrado"}, status=status.HTTP_404_NOT_FOUND) 
   
   
