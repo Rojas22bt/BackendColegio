@@ -130,15 +130,18 @@ def actualizar_detalle_curso_paralelo(request,id):
 
 @api_view(['DELETE'])
 def eliminar_detalle_curso_paralelo(request,id):
+    paralelo_id = request.data.get('paralelo')
+    curso_id = request.data.get('curso')
+
+    if not paralelo_id or not curso_id:
+        return Response({"mensaje": "Se requieren 'materia' y 'curso'"}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        detalle_curso = CursoParalelo.objects.get(id=id)
+        detalle_curso = CursoParalelo.objects.get(paralelo_id=paralelo_id, curso_id=curso_id)
         detalle_curso.delete()
-        return Response(
-            {"mensaje": "Detalle curso eliminado"},
-            status=status.HTTP_200_OK
-        )
-    except CursoParalelo.DoesNotExist:
-      return Response({"mensaje": "Detalle curso no encontrado"}, status=status.HTTP_404_NOT_FOUND)   
+        return Response({"mensaje": "Detalle curso eliminado"}, status=status.HTTP_200_OK)
+    except MateriaAsignada.DoesNotExist:
+        return Response({"mensaje": "Detalle curso no encontrado"}, status=status.HTTP_404_NOT_FOUND) 
   
   
 
