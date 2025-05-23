@@ -6,17 +6,21 @@ from Academia.serializers import DescripcionMateriaSerializer,DescripcionHorario
 
 @api_view(['GET'])
 def obtener_descripcion_completa(request):
-    idBuscardor = DescripcionMateria.objects.all()
+    descripciones = DescripcionMateria.objects.all()
     resultado = []
-    for id in idBuscardor:
-        horarios = HorarioMateria.objects.filter(descripcion_materia=id)
-        descripcion = DescripcionMateriaSerializer(id).data
-        horarios_encontrados = DescripcionHorarioSerializer(horarios, many=True).data
+
+    for descripcion in descripciones:
+        horarios = HorarioMateria.objects.filter(descripcion_materia=descripcion)
+        descripcion_serializada = DescripcionMateriaSerializer(descripcion).data
+        horarios_serializados = DescripcionHorarioSerializer(horarios, many=True).data
+
         resultado.append({
-            "descripcion": descripcion,
-            "horarios": horarios_encontrados
+            "descripcion": descripcion_serializada,
+            "horarios": horarios_serializados
         })
+
     return Response(resultado, status=status.HTTP_200_OK)
+
         
 @api_view(['POST'])
 def crear_descripcion_completa(request):
