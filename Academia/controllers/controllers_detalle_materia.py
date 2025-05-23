@@ -4,14 +4,20 @@ from rest_framework import status
 from BaseDatosColegio.models import DescripcionMateria,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,Curso,Paralelo
 from Academia.serializers import DescripcionMateriaSerializer,DescripcionHorarioSerializer
 
-@api_view(['POST'])
-def crear_descripcion_materia(request):
-    serializer = DescripcionMateriaSerializer(data = request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({"mensaje":"registro exitoso","data":serializer.data},status=status.HTTP_200_OK)  
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+@api_view(['GET'])
+def obtener_descripcion_completa(request):
+    idBuscardor = DescripcionMateria.objects.all()
+    resultado = []
+    for id in idBuscardor:
+        horarios = HorarioMateria.objects.filter(descripcion_materia=id)
+        descripcion = DescripcionMateriaSerializer(id).data
+        horarios_encontrados = DescripcionHorarioSerializer(horarios, many=True).data
+        resultado.append({
+            "descripcion": descripcion,
+            "horarios": horarios_encontrados
+        })
+    return Response(resultado, status=status.HTTP_200_OK)
+        
 @api_view(['POST'])
 def crear_descripcion_completa(request):
     # 1. Crear la DescripcionMateria

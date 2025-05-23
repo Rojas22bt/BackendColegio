@@ -15,7 +15,7 @@ from .controllers.controllers_detalle_curso import (
     obtener_cursos_con_paralelos_y_materias
 )
 
-from .controllers.controllers_detalle_materia import ( crear_descripcion_completa )
+from .controllers.controllers_detalle_materia import ( crear_descripcion_completa, obtener_descripcion_completa)
 
 urlpatterns = [
     path('crear-curso/',crear_curso),
@@ -55,5 +55,6 @@ urlpatterns = [
     path('obtener/',obtener_cursos_con_paralelos_y_materias),
     
     path('crear-detalle-materia/',crear_descripcion_completa),
+    path('obtener-detalle-materia/',obtener_descripcion_completa),
     
 ]
