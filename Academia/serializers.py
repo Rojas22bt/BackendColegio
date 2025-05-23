@@ -44,19 +44,24 @@ class DescripcionMateriaSerializer(serializers.ModelSerializer):
 class DescripcionHorarioSerializer(serializers.ModelSerializer):
     nombre_curso = serializers.SerializerMethodField()
     descripcion_paralelo = serializers.SerializerMethodField()
+    hora_inicial = serializers.SerializerMethodField()
+    hora_final = serializers.SerializerMethodField()
 
     class Meta:
         model = HorarioMateria
-        fields = ['id', 'curso_paralelo', 'descripcion_materia', 'horario', 'nombre_curso', 'descripcion_paralelo','hora_inicial','hora_final']
+        fields = [
+            'id', 'curso_paralelo', 'descripcion_materia', 'horario',
+            'nombre_curso', 'descripcion_paralelo', 'hora_inicial', 'hora_final'
+        ]
 
     def get_nombre_curso(self, obj):
         return obj.curso_paralelo.curso.nombre if obj.curso_paralelo and obj.curso_paralelo.curso else None
 
     def get_descripcion_paralelo(self, obj):
         return obj.curso_paralelo.paralelo.descripcion if obj.curso_paralelo and obj.curso_paralelo.paralelo else None
-    
+
     def get_hora_inicial(self, obj):
         return obj.horario.hora_inicial if obj.horario else None
-    
+
     def get_hora_final(self, obj):
         return obj.horario.hora_final if obj.horario else None
