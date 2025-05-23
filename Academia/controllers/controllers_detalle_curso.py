@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from BaseDatosColegio.models import CursoParalelo,MateriaAsignada
+from BaseDatosColegio.models import CursoParalelo,MateriaAsignada,Curso
 from Academia.serializers import MateriaAsignadaSerializer,CursoParaleloSerializer
 
 #CRUD DE DETALLE CURSO MATERIA
@@ -157,3 +157,28 @@ def eliminar_detalle_curso_paralelo(request,id):
         )
     except CursoParalelo.DoesNotExist:
       return Response({"mensaje": "Detalle curso no encontrado"}, status=status.HTTP_404_NOT_FOUND)   
+  
+  
+
+
+@api_view(['GET'])
+def obtener_cursos_con_paralelos_y_materias(request):
+    cursos = Curso.objects.all()
+    resultado = []
+
+    for curso in cursos:
+        # Obtener paralelos y materias asignadas a este curso
+        paralelos = CursoParalelo.objects.filter(curso=curso).values('paralelo__id', 'paralelo__descripcion')
+        materias = MateriaAsignada.objects.filter(curso=curso).values('materia__id', 'materia__nombre')
+
+        resultado.append({
+            "curso": curso.nombre,
+            "paralelos": [
+                {"id": p["paralelo__id"], "nombre": p["paralelo__descripcion"]} for p in paralelos
+            ],
+            "materias": [
+                {"id": m["materia__id"], "nombre": m["materia__nombre"]} for m in materias
+            ]
+        })
+
+    return Response(resultado, status=status.HTTP_200_OK)
