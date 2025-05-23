@@ -1,4 +1,4 @@
-from BaseDatosColegio.models import Curso,Paralelo,Nivel,Horario,Materia,CursoParalelo,MateriaAsignada
+from BaseDatosColegio.models import Curso,Paralelo,Nivel,Horario,Materia,CursoParalelo,MateriaAsignada,DescripcionMateria
 from rest_framework import serializers
 
 class NivelSerializer(serializers.ModelSerializer):
@@ -35,3 +35,8 @@ class MateriaAsignadaSerializer(serializers.ModelSerializer):
     class Meta:
         model = MateriaAsignada
         fields = ['curso','materia']
+
+class DescripcionMateriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DescripcionMateria
+        fields = ['profesor','materia']
