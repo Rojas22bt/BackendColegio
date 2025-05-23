@@ -6,29 +6,25 @@ from Academia.serializers import DescripcionMateriaSerializer,DescripcionHorario
 
 @api_view(['GET'])
 def obtener_descripcion_completa(request):
-    # Usamos select_related para evitar consultas adicionales por cada descripción
-    descripciones = DescripcionMateria.objects.select_related("profesor", "materia").all()
+    descripciones = DescripcionMateria.objects.all()
     resultado = []
 
     for descripcion in descripciones:
-        # Obtenemos los horarios relacionados
         horarios = HorarioMateria.objects.filter(descripcion_materia=descripcion)
-
-        # Serializamos la descripción y los horarios
         descripcion_serializada = DescripcionMateriaSerializer(descripcion).data
         horarios_serializados = DescripcionHorarioSerializer(horarios, many=True).data
 
-        # Agregamos los nombres legibles del profesor y la materia
-        profesor = descripcion.profesor
-        materia = descripcion.materia
+        #agregarNombreProfesor
+        # profesor = Profesor.objects.get(id=descripcion_serializada.profesor)
+        # descripcion_serializada["profesor_nombre"] = profesor.nombre
+        #agregamosNombreMateria
+        # materia = Materia.objects.get(id=descripcion_serializada.materia)
+        # descripcion_serializada["materia_nombre"] = materia.nombre
 
-        descripcion_serializada["profesor_nombre"] = profesor.nombre if profesor else "No asignado"
-        descripcion_serializada["materia_nombre"] = materia.nombre if materia else "No asignada"
-
-        # Añadimos al resultado
         resultado.append({
             "descripcion": descripcion_serializada,
-            "horarios": horarios_serializados
+            "horarios": horarios_serializados,
+            "id":descripcion_serializada.materia
         })
 
     return Response(resultado, status=status.HTTP_200_OK)
