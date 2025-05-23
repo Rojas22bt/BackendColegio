@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from BaseDatosColegio.models import DescripcionMateria,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,Curso,Paralelo
-from Academia.serializers import DescripcionMateriaSerializer,DescripcionHorarioSerializer
+from Academia.serializers import DescripcionMateriaSerializer,DescripcionHorarioSerializer,MateriaSerializer
 
 @api_view(['GET'])
 def obtener_descripcion_completa(request):
@@ -20,6 +20,9 @@ def obtener_descripcion_completa(request):
         #agregamosNombreMateria
         # materia = Materia.objects.get(id=descripcion_serializada.materia)
         # descripcion_serializada["materia_nombre"] = materia.nombre
+        materia_id = descripcion_serializada["materia"]
+        obtenerMateria = MateriaSerializer(Materia.objects.get(id=materia_id),many=True).data
+        descripcion_serializada["materia_nombre"] = obtenerMateria["nombre"]
 
         resultado.append({
             "descripcion": descripcion_serializada,
