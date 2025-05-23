@@ -1,9 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from BaseDatosColegio.models import DescripcionMateria,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,Curso,Paralelo
+from BaseDatosColegio.models import DescripcionMateria,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,Curso,Paralelo,Usuario
 from Academia.serializers import DescripcionMateriaSerializer,DescripcionHorarioSerializer,MateriaSerializer
-from Usuarios.serializers import ProfesorSerializer
+from Usuarios.serializers import UsuarioSerializer
 
 @api_view(['GET'])
 def obtener_descripcion_completa(request):
@@ -17,8 +17,8 @@ def obtener_descripcion_completa(request):
 
         #agregarNombreProfesor
         profesor_id = descripcion_serializada["profesor"]
-        profesor = Profesor.objects.get(id=profesor_id)
-        obtenerProfesor = ProfesorSerializer(profesor).data
+        profesor = Usuario.objects.get(id=profesor_id)
+        obtenerProfesor = UsuarioSerializer(profesor).data
         descripcion_serializada["profesor_nombre"] = obtenerProfesor["nombre"]
         #agregamosNombreMateria
         materia_id = descripcion_serializada["materia"]
