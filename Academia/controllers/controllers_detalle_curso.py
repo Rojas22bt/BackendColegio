@@ -130,7 +130,7 @@ def actualizar_detalle_curso_paralelo(request,id):
 
 @api_view(['DELETE'])
 def eliminar_detalle_curso_paralelo(request):
-    print(request.data)
+    print("Datos recibidos:", request.data)
     curso_id = request.data.get('curso')
     paralelo_id = request.data.get('paralelo')
 
