@@ -63,7 +63,7 @@ def actualizar_detalle_curso_materia(request):
 
 @api_view(['DELETE'])
 def eliminar_detalle_curso_materia(request):
-    print(request.data)
+    print(request)
     materia_id = request.data.get('materia')
     curso_id = request.data.get('curso')
 
