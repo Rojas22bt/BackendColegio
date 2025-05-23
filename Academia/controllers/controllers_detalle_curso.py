@@ -26,37 +26,45 @@ def obtener_detalle_curso_materia(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
-def actualizar_detalle_curso_materia(request,id):
+def actualizar_detalle_curso_materia(request):
+    materia_id = request.data.get('materia')
+    curso_id = request.data.get('curso')
+
+    if not materia_id or not curso_id:
+        return Response({"mensaje": "Se requieren 'materia' y 'curso'"}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        detalle_curso = MateriaAsignada.objects.get(id=id)
+        detalle_curso = MateriaAsignada.objects.get(materia_id=materia_id, curso_id=curso_id)
     except MateriaAsignada.DoesNotExist:
-        return Response(
-            {"mensaje": "Detalle curso no encontrado"},
-            status=status.HTTP_404_NOT_FOUND
-            )
-    serializer = MateriaAsignadaSerializer(detalle_curso, data=request.data)
+        return Response({"mensaje": "Detalle curso no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = MateriaAsignadaSerializer(detalle_curso, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response({
             "mensaje": "Detalle curso actualizado correctamente",
             "data": serializer.data
         }, status=status.HTTP_200_OK)
+
     return Response({
         "mensaje": "Error al actualizar el detalle curso",
         "errores": serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
-def eliminar_detalle_curso_materia(request,id):
+def eliminar_detalle_curso_materia(request):
+    materia_id = request.data.get('materia')
+    curso_id = request.data.get('curso')
+
+    if not materia_id or not curso_id:
+        return Response({"mensaje": "Se requieren 'materia' y 'curso'"}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        detalle_curso = MateriaAsignada.objects.get(id=id)
+        detalle_curso = MateriaAsignada.objects.get(materia_id=materia_id, curso_id=curso_id)
         detalle_curso.delete()
-        return Response(
-            {"mensaje": "Detalle curso eliminado"},
-            status=status.HTTP_200_OK
-        )
+        return Response({"mensaje": "Detalle curso eliminado"}, status=status.HTTP_200_OK)
     except MateriaAsignada.DoesNotExist:
-      return Response({"mensaje": "Detalle curso no encontrado"}, status=status.HTTP_404_NOT_FOUND)   
+        return Response({"mensaje": "Detalle curso no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
 #CRUD DE DETALLE CURSO PARALELO
 @api_view(['POST'])

@@ -42,8 +42,8 @@ urlpatterns = [
     
     path('crear-detalle-curso-materia/',crear_detalle_curso_materia),
     path('obtener-detalle-curso-materia/',obtener_detalle_curso_materia),
-    path('actualizar-detalle-curso-materia/<int:id>/',actualizar_detalle_curso_materia),
-    path('eliminar-detalle-curso-materia/<int:id>/',eliminar_detalle_curso_materia),
+    path('actualizar-detalle-curso-materia/',actualizar_detalle_curso_materia),
+    path('eliminar-detalle-curso-materia/',eliminar_detalle_curso_materia),
     
     path('crear-detalle-curso-paralelo/',crear_detalle_curso_paralelo),
     path('obtener-detalle-curso-paralelo/',obtener_detalle_curso_paralelo),
