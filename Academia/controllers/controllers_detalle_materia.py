@@ -14,12 +14,21 @@ def obtener_descripcion_completa(request):
         descripcion_serializada = DescripcionMateriaSerializer(descripcion).data
         horarios_serializados = DescripcionHorarioSerializer(horarios, many=True).data
 
-        #agregarNombreProfesor
-        # profesor = Profesor.objects.get(id=descripcion_serializada["profesor"])
-        # descripcion_serializada["profesor_nombre"] = profesor.nombre
-        #agregamosNombreMateria
-        # materia = Materia.objects.get(id=descripcion_serializada["materia"])
-        # descripcion_serializada["materia_nombre"] = materia.nombre
+        # Extraer ID del profesor y materia desde el diccionario serializado
+        profesor_id = descripcion_serializada["profesor"]
+        materia_id = descripcion_serializada["materia"]
+
+        try:
+            profesor = Profesor.objects.get(id=profesor_id)
+            descripcion_serializada["profesor_nombre"] = profesor.nombre
+        except Profesor.DoesNotExist:
+            descripcion_serializada["profesor_nombre"] = "No encontrado"
+
+        try:
+            materia = Materia.objects.get(id=materia_id)
+            descripcion_serializada["materia_nombre"] = materia.nombre
+        except Materia.DoesNotExist:
+            descripcion_serializada["materia_nombre"] = "No encontrada"
 
         resultado.append({
             "descripcion": descripcion_serializada,
