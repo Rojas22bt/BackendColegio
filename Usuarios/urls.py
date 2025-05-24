@@ -9,6 +9,8 @@ from .controllers.controller_permiso import (
 
 from .controllers.controller_auth import login_usuario
 
+from .controllers.controller_profesor import obtener_materia_horario_profesor
+
 urlpatterns = [
     
     #-----URL LOGIN-----
@@ -35,5 +37,7 @@ urlpatterns = [
     
     #----URL PARA ACTUALIZAR PERMISOS POR ROL----
     path('actualizarEstadoPermiso/',actualizar_estado_permiso),
-    path('obtenerRolesAgrupados/',obtener_permiso_agrupados_por_rol)
+    path('obtenerRolesAgrupados/',obtener_permiso_agrupados_por_rol),
+    
+    path('obtenerMateriaProfesor/<int:id>/',obtener_materia_horario_profesor)
 ]
