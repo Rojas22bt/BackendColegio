@@ -7,9 +7,14 @@ from Academia.serializers import DescripcionHorarioSerializer,DescripcionMateria
 @api_view(['GET'])
 def obtener_materia_horario_profesor(request, id):
     descripcion_materias = DescripcionMateria.objects.filter(profesor=id)
-    
-    if descripcion_materias.exists():
-        serializer = DescripcionMateriaSerializer(descripcion_materias, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    else:
-        return Response({"mensaje": "Profesor no encontrado"})
+    resultado = []
+    for detalle in descripcion_materias:
+        horarios = HorarioMateria.objects.get(descripcion_materia=detalle)
+        serializer = DescripcionHorarioSerializer(horarios,many=True).data
+        serializer2 = DescripcionMateriaSerializer(detalle,many=True).data
+        resultado.append({
+            "descripcion":serializer2,
+            "horarios":serializer
+        })
+
+    return Response(resultado, status=status.HTTP_200_OK)
