@@ -8,7 +8,7 @@ from Academia.serializers import DescripcionHorarioSerializer,DescripcionMateria
 def obtener_materia_horario_profesor(request,id):
     try:
         descripcion_materia = DescripcionMateria.objects.get(profesor = id)
-        serializer = DescripcionHorarioSerializer(descripcion_materia).data
+        serializer = DescripcionHorarioSerializer(descripcion_materia,many=True).data
         return Response(serializer, status=status.HTTP_200_OK)
     
     except DescripcionMateria.DoesNotExist:
