@@ -23,7 +23,7 @@ def crear_dimension(request):
 def obtener_dimensiones(request):
     dimensiones = Dimension.objects.all()
     serializer = DimensionSerializers(dimensiones, many=True)
-    return Response({serializer.data}, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['PUT'])
