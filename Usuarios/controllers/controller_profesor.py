@@ -10,8 +10,8 @@ def obtener_materia_horario_profesor(request, id):
     resultado = []
     for detalle in descripcion_materias:
         horarios = HorarioMateria.objects.get(descripcion_materia=detalle)
-        serializer = DescripcionHorarioSerializer(horarios,many=True).data
-        serializer2 = DescripcionMateriaSerializer(detalle,many=True).data
+        serializer = DescripcionHorarioSerializer(horarios).data
+        serializer2 = DescripcionMateriaSerializer(detalle).data
         resultado.append({
             "descripcion":serializer2,
             "horarios":serializer
