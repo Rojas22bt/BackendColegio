@@ -5,11 +5,11 @@ from BaseDatosColegio.models import Usuario,Profesor,Alumno,DescripcionMateria,H
 from Academia.serializers import DescripcionHorarioSerializer,DescripcionMateriaSerializer
 
 @api_view(['GET'])
-def obtener_materia_horario_profesor(request,id):
-    try:
-        descripcion_materia = DescripcionMateria.objects.get(profesor = id)
-        serializer = DescripcionHorarioSerializer(descripcion_materia,many=True).data
-        return Response(serializer, status=status.HTTP_200_OK)
+def obtener_materia_horario_profesor(request, id):
+    descripcion_materias = DescripcionMateria.objects.filter(profesor=id)
     
-    except DescripcionMateria.DoesNotExist:
-        return Response({"mensaje":"Profesor no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    if descripcion_materias.exists():
+        serializer = DescripcionHorarioSerializer(descripcion_materias, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"mensaje": "Profesor no encontrado"})
