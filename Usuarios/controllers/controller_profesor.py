@@ -9,7 +9,7 @@ def obtener_materia_horario_profesor(request, id):
     descripcion_materias = DescripcionMateria.objects.filter(profesor=id)
     
     if descripcion_materias.exists():
-        serializer = DescripcionHorarioSerializer(descripcion_materias, many=True)
+        serializer = DescripcionMateriaSerializer(descripcion_materias, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({"mensaje": "Profesor no encontrado"})
