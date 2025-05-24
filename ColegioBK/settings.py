@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'BaseDatosColegio',
+    'Evaluaciones',
     'Academia',
     'Usuarios'
 ]
