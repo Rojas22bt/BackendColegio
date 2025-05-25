@@ -10,7 +10,7 @@ from Periodo.serializers import TrimestreSerializers,DetalleTrimestreSerializer
 def crear_trimestre(request):
     serializer = TrimestreSerializers(data=request.data)
     if serializer.is_valid():
-        trimestre = serializer()
+        trimestre = serializer.save()
         data = request.data.copy()
         data["trimestre"]= trimestre.id
         serializer2 = DetalleTrimestreSerializer(data=data)
