@@ -11,5 +11,5 @@ urlpatterns = [
     path('crear-notificacion-uni/<int:id>/',crear_notificacion_uni),
     path('obtener-notificacion-uni/<int:id>/',obtener_notificacion_uni),
     path('actualizar-notificacion-uni/<int:id_notificacion>/',actualizar_notificacion_uni),
-    path('crear-notificacion-rol/<int:id_notificacion>/',crear_notificacion_rol),
+    path('crear-notificacion-rol/',crear_notificacion_rol),
 ]
