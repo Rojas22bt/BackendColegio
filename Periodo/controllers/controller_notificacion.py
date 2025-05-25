@@ -48,3 +48,37 @@ def actualizar_notificacion_uni(request,id_notificacion):
         return Response({"mensaje": "Notificación actualizada correctamente", "data": serializer.data}, status=status.HTTP_200_OK)
 
     return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+@api_view(['POST'])
+def crear_notificacion_rol(request):
+    id_rol = request.data.get("rol")
+    if not id_rol:
+        return Response({"error": "Falta el campo 'rol'"}, status=status.HTTP_400_BAD_REQUEST)
+
+    usuarios = Usuario.objects.filter(rol=id_rol)
+    if not usuarios.exists():
+        return Response({"mensaje": "No hay usuarios con ese rol"}, status=status.HTTP_404_NOT_FOUND)
+
+    errores = []
+    exitosos = 0
+
+    for usuario in usuarios:
+        data = request.data.copy()
+        data["usuario"] = usuario.id
+        serializer = NotificacionSerializers(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            exitosos += 1
+        else:
+            errores.append({
+                "usuario_id": usuario.id,
+                "error": serializer.errors
+            })
+
+    return Response({
+        "mensaje": f"Notificaciones enviadas a {exitosos} usuarios.",
+        "fallos": errores
+    }, status=status.HTTP_207_MULTI_STATUS if errores else status.HTTP_200_OK)
