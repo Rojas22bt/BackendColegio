@@ -20,3 +20,9 @@ def crear_gestion(request):
     
     return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def obtener_gestiones(request):
+    gestiones = Gestion.objects.all()
+    serializer = GestionSerializers(gestiones,many=True)
+    return Response(serializer.data,status=status.HTTP_200_OK)
+
