@@ -33,3 +33,18 @@ def obtener_notificacion_uni(request,id):
         }
         )
     return Response(resultado, status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+def actualizar_notificacion_uni(request,id_notificacion):
+    try:
+        notificacion = Notificacion.objects.get(id=id_notificacion)
+    except Notificacion.DoesNotExist:
+        return Response({"mensaje": "Notificación no encontrada para este usuario"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = NotificacionSerializers(notificacion, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"mensaje": "Notificación actualizada correctamente", "data": serializer.data}, status=status.HTTP_200_OK)
+
+    return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
