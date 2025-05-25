@@ -9,4 +9,4 @@ class DimensionSerializers(serializers.ModelSerializer):
 class AsistenciaSerializers(serializers.ModelSerializer):
     class Meta:
         model = Asistencia
-        fields = ['id','comentario','fecha','estado','alumno']
+        fields = ['id','fecha','estado','alumno']
