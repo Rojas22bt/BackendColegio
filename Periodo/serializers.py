@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from BaseDatosColegio.models import Trimestre,Gestion ,DetalleTrimestre
+from BaseDatosColegio.models import Trimestre,Gestion ,DetalleTrimestre,Participacion,Notificacion
 
 class TrimestreSerializers(serializers.ModelSerializer):
     class Meta:
@@ -15,3 +15,13 @@ class DetalleTrimestreSerializer(serializers.ModelSerializer):
     class Meta:
         model = DetalleTrimestre
         fields = ['id','gestion','trimestre']
+    
+class ParticipacionSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Participacion
+        fields =['id','descripcion','fecha','alumno','curso','materia']
+        
+class NotificacionSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Notificacion
+        fields = ['id','titulo','mensaje','fecha','estado','usuario']

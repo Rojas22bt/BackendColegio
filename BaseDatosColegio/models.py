@@ -116,6 +116,8 @@ class Participacion(models.Model):
     descripcion = models.CharField(max_length=30)
     fecha = models.DateField()
     alumno = models.ForeignKey('Alumno', on_delete=models.CASCADE)
+    curso = models.IntegerField(null=True)
+    materia = models.IntegerField(null=True)
 
     def __str__(self):
         return f"Participación de {self.alumno} - {self.fecha}"
@@ -302,6 +304,7 @@ class Notificacion(models.Model):
     mensaje = models.CharField(max_length=500)
     fecha = models.DateField()
     estado = models.BooleanField()
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.titulo
