@@ -31,7 +31,7 @@ class PermisoDetalleSerializer(serializers.ModelSerializer):
 class AlumnoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alumno
-        fields = ['alumno','matricula']
+        fields = ['alumno','matricula','curso_paralelo']
         
 class ProfesorSerializer(serializers.ModelSerializer):
     class Meta:
