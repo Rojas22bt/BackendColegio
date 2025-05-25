@@ -2,19 +2,25 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from BaseDatosColegio.models import Trimestre
-from Periodo.serializers import TrimestreSerializers
+from Periodo.serializers import TrimestreSerializers,DetalleTrimestreSerializer
+
 
 
 @api_view(['POST'])
 def crear_trimestre(request):
-    serializer = TrimestreSerializers(data = request.data)
+    serializer = TrimestreSerializers(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        return Response({"mensaje":"correctamente registrado","data":serializer.data}, status=status.HTTP_201_CREATED)
-    return Response({
-        "mensaje": "Ocurrió algún problema al guardar la asistencia.",
-        "errores": serializer.errors
-    }, status=status.HTTP_400_BAD_REQUEST)
+        trimestre = serializer()
+        data = request.data.copy()
+        data["trimestre"]= trimestre.id
+        serializer2 = DetalleTrimestreSerializer(data=data)
+        if serializer2.is_valid():
+            serializer2.save()
+            return Response({"mensaje":"registrado correctamente"},status=status.HTTP_201_CREATED)
+        return Response({"erros":serializer2.errors},status=status.HTTP_400_BAD_REQUEST)
+    return Response({"erros":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+    
+    
 
 @api_view(['GET'])
 def obtener_trimestres(request):
