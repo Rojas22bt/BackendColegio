@@ -13,5 +13,5 @@ class GestionSerializers(serializers.ModelSerializer):
     
 class DetalleTrimestreSerializer(serializers.ModelSerializer):
     class Meta:
-        mode = DetalleTrimestre
+        model = DetalleTrimestre
         fields = ['id','gestion','trimestre']
