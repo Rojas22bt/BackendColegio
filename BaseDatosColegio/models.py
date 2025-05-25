@@ -93,7 +93,6 @@ class Bitacora(models.Model):
     
 
 class Asistencia(models.Model):
-    comentario = models.CharField(max_length=100)
     fecha = models.DateField()
     estado = models.BooleanField()
     alumno = models.ForeignKey('Alumno', on_delete=models.CASCADE)
