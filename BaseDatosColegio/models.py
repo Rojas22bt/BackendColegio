@@ -77,14 +77,6 @@ class Profesor(models.Model):
         return f"Profesor: {self.profesor.nombre}"
 
 
-class Alumno(models.Model):
-    alumno = models.OneToOneField(Usuario, on_delete=models.CASCADE, primary_key=True)
-    matricula = models.CharField(max_length=20, null=False)
-
-    def __str__(self):
-        return f"Alumno: {self.alumno.nombre}"
-
-
 # ------------ MODULO BITÁCORA ------------------
 class Bitacora(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
@@ -168,6 +160,16 @@ class CursoParalelo(models.Model):
 
     def __str__(self):
         return f"{self.curso} {self.paralelo}"
+    
+class Alumno(models.Model):
+    alumno = models.OneToOneField(Usuario, on_delete=models.CASCADE, primary_key=True)
+    matricula = models.CharField(max_length=20, null=False)
+    curso_paralelo = models.ForeignKey(CursoParalelo, on_delete=models.CASCADE, null=True, blank=True)
+
+
+    def __str__(self):
+        return f"Alumno: {self.alumno.nombre}"
+
     
 class Materia(models.Model):
     nombre = models.CharField(max_length=15)
