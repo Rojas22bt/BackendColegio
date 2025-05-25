@@ -4,6 +4,25 @@ from rest_framework import status
 from BaseDatosColegio.models import Gestion,Trimestre,DetalleTrimestre
 from Periodo.serializers import GestionSerializers,DetalleTrimestreSerializer
 
+@api_view(['GET'])
+def obtener_gestiones_completas(request):
+    gestiones = Gestion.objects.all()
+    resultado = []
+
+    for gestion in gestiones:
+        detalle = DetalleTrimestre.objects.filter(gestion=gestion)
+        serializer = DetalleTrimestreSerializer(detalle, many=True)
+
+        resultado.append({
+            "gestion": gestion.id,
+            "anio_escolar": gestion.anio_escolar,
+            "detalle": serializer.data
+        })
+
+    return Response(resultado, status=status.HTTP_200_OK)
+
+        
+
 @api_view(['POST'])
 def crear_gestion(request):
     anio_escolar = request.data.get("anio_escolar")
