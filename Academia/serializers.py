@@ -29,7 +29,7 @@ class MateriaSerializer(serializers.ModelSerializer):
 class CursoParaleloSerializer(serializers.ModelSerializer):
     class Meta:
         model = CursoParalelo
-        fields = ['curso','paralelo']
+        fields = ['id','curso','paralelo']
     
 class MateriaAsignadaSerializer(serializers.ModelSerializer):
     class Meta:
