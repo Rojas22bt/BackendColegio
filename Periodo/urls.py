@@ -10,5 +10,5 @@ urlpatterns = [
     path('crear-gestion/',crear_gestion),
     path('crear-notificacion-uni/<int:id>/',crear_notificacion_uni),
     path('obtener-notificacion-uni/<int:id>/',obtener_notificacion_uni),
-    path('actualizar-notificacion-uni/<int:id>/',actualizar_notificacion_uni),
+    path('actualizar-notificacion-uni/<int:id_notificacion>/',actualizar_notificacion_uni),
 ]
