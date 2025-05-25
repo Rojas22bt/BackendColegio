@@ -12,7 +12,7 @@ def crear_notificacion_uni(request,id):
         return Response({"mensaje":"usuario no encontrado"}, status=status.HTTP_400_BAD_REQUEST)
     data = request.data.copy()
     data["usuario"] = usuario.id
-    serializer = NotificacionSerializers(data,many=True)
+    serializer = NotificacionSerializers(data=data,many=True)
     if serializer.is_valid():
         serializer.save()
         return Response({"mensaje":"notificacion creado"}, status=status.HTTP_201_CREATED)
