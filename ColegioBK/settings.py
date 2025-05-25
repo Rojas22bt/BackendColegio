@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'BaseDatosColegio',
     'Evaluaciones',
+    'Periodo',
     'Academia',
     'Usuarios'
 ]
