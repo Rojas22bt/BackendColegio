@@ -14,13 +14,15 @@ class GestionSerializers(serializers.ModelSerializer):
     
 class DetalleTrimestreSerializer(serializers.ModelSerializer):
     trimestre_nro = serializers.SerializerMethodField()
+    trimestre_info = TrimestreSerializers(source='trimestre', read_only=True)
 
     class Meta:
         model = DetalleTrimestre
-        fields = ['id', 'gestion', 'trimestre', 'trimestre_nro']
+        fields = ['id', 'gestion', 'trimestre', 'trimestre_nro', 'trimestre_info']
 
     def get_trimestre_nro(self, obj):
         return obj.trimestre.nro if obj.trimestre else None
+
 
     
 class ParticipacionSerializers(serializers.ModelSerializer):
