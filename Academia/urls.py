@@ -17,6 +17,8 @@ from .controllers.controllers_detalle_curso import (
 
 from .controllers.controllers_detalle_materia import ( crear_descripcion_completa, obtener_descripcion_completa)
 
+from .controllers.controllers_gestion_alumno import crear_libreta
+
 urlpatterns = [
     path('crear-curso/',crear_curso),
     path('obtener-cursos/',obtener_cursos),
@@ -56,5 +58,7 @@ urlpatterns = [
     
     path('crear-detalle-materia/',crear_descripcion_completa),
     path('obtener-detalle-materia/',obtener_descripcion_completa),
+    
+    path('crear-libreta/',crear_libreta),
     
 ]

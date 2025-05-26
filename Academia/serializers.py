@@ -1,4 +1,4 @@
-from BaseDatosColegio.models import Curso,Paralelo,Nivel,Horario,Materia,CursoParalelo,MateriaAsignada,DescripcionMateria,HorarioMateria
+from BaseDatosColegio.models import Curso,Paralelo,Nivel,Horario,Materia,CursoParalelo,MateriaAsignada,DescripcionMateria,HorarioMateria,Libreta
 from rest_framework import serializers
 
 class NivelSerializer(serializers.ModelSerializer):
@@ -65,3 +65,10 @@ class DescripcionHorarioSerializer(serializers.ModelSerializer):
 
     def get_hora_final(self, obj):
         return obj.horario.hora_final if obj.horario else None
+    
+
+
+class LibretaSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Libreta
+        fields = ['id','alumno','aprobado','curso','detalle_trimestre','descripcion']
