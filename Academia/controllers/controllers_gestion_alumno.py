@@ -28,8 +28,8 @@ def crear_libreta(request):
             respuestas.append({
                     "datos":serializer.data,
                     "id_detalle_trimestre": detalle.id,
-                    "trimestre_id": detalle.trimestre,
-                    "id_gestion": detalle.gestion
+                    "trimestre_id": detalle.trimestre_id,
+                    "id_gestion": detalle.gestion_id
                 })
         else:
             errores.append({"detalle_id": detalle.id, "errors": serializer.errors})
