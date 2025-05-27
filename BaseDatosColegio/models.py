@@ -165,11 +165,20 @@ class CursoParalelo(models.Model):
 class Alumno(models.Model):
     alumno = models.OneToOneField(Usuario, on_delete=models.CASCADE, primary_key=True)
     matricula = models.CharField(max_length=20, null=False)
-    curso_paralelo = models.ForeignKey(CursoParalelo, on_delete=models.CASCADE, null=True, blank=True)
 
 
     def __str__(self):
         return f"Alumno: {self.alumno.nombre}"
+
+class AlumnoCursoParalelo(models.Model):
+    curso_paralelo = models.ForeignKey(CursoParalelo, on_delete=models.CASCADE)
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('curso_paralelo', 'alumno')
+
+    def __str__(self):
+        return f"{self.alumno} en {self.curso_paralelo}"
 
     
 class Materia(models.Model):
