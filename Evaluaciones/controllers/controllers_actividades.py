@@ -122,3 +122,40 @@ def obtener_actividades(request):
     serializer = ActividadSerializer(actividades,many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)
         
+
+@api_view(['GET'])
+def obtener_tareas_asignadas(request):
+    id_paralelo = request.query_params.get("id_cursoparalelo")
+    gestion = request.query_params.get("gestion")
+    id_horario = request.query_params.get("horario_materia")
+
+    if not id_paralelo or not gestion or not id_horario:
+        return Response({
+            "error": "Faltan parámetros: id_cursoparalelo, gestion o horario_materia"
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    # Obtener alumnos según paralelo y gestión
+    alumnos = Alumno.objects.filter(
+        alumnocursoparalelo__curso_paralelo_id=id_paralelo,
+        libreta__detalle_trimestre__gestion=gestion
+    ).distinct()
+
+    if not alumnos.exists():
+        return Response({
+            "mensaje": "No se encontraron alumnos para esa gestión, curso-paralelo y horario."
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    resultado = []
+    for alumno in alumnos:
+        tareas = TareaAsignada.objects.filter(
+            alumno=alumno,
+            horario_materia_id=id_horario
+        )
+        tareas_serializer = TareaAsignadaSerializers(tareas, many=True)
+        resultado.append({
+            "alumno_id": alumno.alumno_id,
+            "nombre": alumno.alumno.nombre,
+            "tareas": tareas_serializer.data
+        })
+
+    return Response(resultado, status=status.HTTP_200_OK)
