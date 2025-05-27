@@ -10,11 +10,16 @@ class AsistenciaSerializers(serializers.ModelSerializer):
     class Meta:
         model = Asistencia
         fields = ['id','fecha','estado','alumno']
+        
+        
     
 class ActividadSerializer(serializers.ModelSerializer):
+    informacion_dimension = DimensionSerializers(source='dimension', read_only=True)
+    
     class Meta:
         model = Actividad
-        fields = ['id','nombre','estado']
+        fields = ['id', 'nombre', 'estado', 'informacion_dimension']
+
 
 class DetalleDimensionSerializers(serializers.ModelSerializer):
     class Meta:
