@@ -1,4 +1,4 @@
-from BaseDatosColegio.models import Curso,Paralelo,Nivel,Horario,Materia,CursoParalelo,MateriaAsignada,DescripcionMateria,HorarioMateria,Libreta
+from BaseDatosColegio.models import Curso,Paralelo,Nivel,Horario,Materia,CursoParalelo,MateriaAsignada,DescripcionMateria,HorarioMateria,Libreta, AlumnoCursoParalelo
 from rest_framework import serializers
 
 class NivelSerializer(serializers.ModelSerializer):
@@ -72,3 +72,8 @@ class LibretaSerializers(serializers.ModelSerializer):
     class Meta:
         model = Libreta
         fields = ['id','alumno','aprobado','curso','detalle_trimestre','descripcion']
+
+class AlumnoParaleloSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = AlumnoCursoParalelo
+        fields= ['id','alumno','curso_paralelo']
