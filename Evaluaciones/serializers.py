@@ -34,5 +34,5 @@ class DetalleDimensionSerializers(serializers.ModelSerializer):
 class TareaAsignadaSerializers(serializers.ModelSerializer):
     class Meta:
         model = TareaAsignada
-        field = ['id','descripcion','puntaje','fecha_inicio','fecha_entrega','estado','actividad','alumno','horario_materia']
+        fields = ['id','descripcion','puntaje','fecha_inicio','fecha_entrega','estado','actividad','alumno','horario_materia']
         
