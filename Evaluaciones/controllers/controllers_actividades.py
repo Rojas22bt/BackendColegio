@@ -68,7 +68,7 @@ def crear_tareas(request):
 
     for alumno in alumnos:
         data = data_base.copy()
-        data["alumno"] = alumno.id
+        data["alumno"] = alumno.alumno_id
 
         serializer = TareaAsignadaSerializers(data=data)
         if serializer.is_valid():
