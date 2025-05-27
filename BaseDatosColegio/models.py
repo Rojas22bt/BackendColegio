@@ -208,7 +208,6 @@ class HorarioMateria(models.Model):
 class Actividad(models.Model):
     nombre = models.CharField(max_length=30)
     estado = models.BooleanField()
-    horario_materia = models.ForeignKey(HorarioMateria, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nombre
@@ -233,6 +232,7 @@ class TareaAsignada(models.Model):
     estado = models.BooleanField()
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE)
     alumno = models.ForeignKey('Alumno', on_delete=models.CASCADE)
+    horario_materia = models.ForeignKey(HorarioMateria, on_delete=models.CASCADE,null=True, blank=True)
 
     def __str__(self):
         return f"Tarea de {self.alumno} - {self.actividad}"
