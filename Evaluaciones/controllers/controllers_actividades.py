@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from BaseDatosColegio.models import Alumno,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,DescripcionMateria,Actividad,Dimension,DetalleDimension,TareaAsignada
 from Evaluaciones.serializers import ActividadSerializer,DetalleDimensionSerializers
+from Usuarios.serializers import AlumnoSerializer
 
 
 @api_view(['POST'])
@@ -38,4 +39,25 @@ def crear_actividad(request):
         "mensaje": "Ocurrió un problema al registrar la actividad",
         "errores": serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def obtener_tareas(request):
+    id_paralelo = request.query_params.get("id_cursoparalelo")
+    gestion = request.query_params.get("gestion")
+
+    if not id_paralelo or not gestion:
+        return Response({"error": "Faltan parámetros id_cursoparalelo o gestion"},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    alumnos = Alumno.objects.filter(
+        alumnocursoparalelo__curso_paralelo_id=id_paralelo,
+        libreta__gestion__id=gestion
+    ).distinct()
+
+    serializer = AlumnoSerializer(alumnos, many=True)  # Asumiendo que ya existe
+    return Response({
+        "cantidad_alumnos": alumnos.count(),
+        "alumnos": serializer.data
+    }, status=status.HTTP_200_OK)
+    
         
