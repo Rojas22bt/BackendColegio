@@ -74,12 +74,12 @@ def crear_tareas(request):
         if serializer.is_valid():
             tarea = serializer.save()
             tareas_creadas.append({
-                "alumno": alumno.id,
+                "alumno": alumno.alumno_id,
                 "tarea_id": tarea.id
             })
         else:
             errores.append({
-                "alumno": alumno.id,
+                "alumno": alumno.alumno_id,
                 "errores": serializer.errors
             })
 
