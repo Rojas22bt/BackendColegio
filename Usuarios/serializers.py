@@ -28,10 +28,16 @@ class PermisoDetalleSerializer(serializers.ModelSerializer):
         fields = ['id', 'rol', 'privilegio', 'estado']
 
 #PARA LO QUE TENGA QUE VER CON USUARIO
+
 class AlumnoSerializer(serializers.ModelSerializer):
+    nombre_usuario = serializers.SerializerMethodField()
+
     class Meta:
         model = Alumno
-        fields = ['alumno','matricula']
+        fields = ['alumno', 'matricula', 'nombre_usuario']
+    
+    def get_nombre_usuario(self, obj):
+        return obj.alumno.nombre if obj.alumno else None
         
 class ProfesorSerializer(serializers.ModelSerializer):
     class Meta:
