@@ -14,11 +14,16 @@ class AsistenciaSerializers(serializers.ModelSerializer):
         
     
 class ActividadSerializer(serializers.ModelSerializer):
-    informacion_dimension = DimensionSerializers(source='dimension', read_only=True)
+    dimensiones = serializers.SerializerMethodField()
     
     class Meta:
         model = Actividad
-        fields = ['id', 'nombre', 'estado', 'informacion_dimension']
+        fields = ['id', 'nombre', 'estado', 'dimensiones']
+
+    def get_dimensiones(self, obj):
+        detalles = DetalleDimension.objects.filter(actividad=obj)
+        return DimensionSerializers([detalle.dimension for detalle in detalles], many=True).data
+
 
 
 class DetalleDimensionSerializers(serializers.ModelSerializer):
