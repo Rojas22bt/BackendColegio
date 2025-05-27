@@ -51,7 +51,7 @@ def obtener_tareas(request):
 
     alumnos = Alumno.objects.filter(
         alumnocursoparalelo__curso_paralelo_id=id_paralelo,
-        libreta__gestion__id=gestion
+        libreta__detalle_trimestre__gestion=gestion
     ).distinct()
 
     serializer = AlumnoSerializer(alumnos, many=True)  # Asumiendo que ya existe
