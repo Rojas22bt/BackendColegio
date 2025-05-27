@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from BaseDatosColegio.models import Alumno,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,DescripcionMateria,Actividad,Dimension,DetalleDimension,TareaAsignada
-from Evaluaciones.serializers import ActividadSerializer,DetalleDimensionSerializers
+from Evaluaciones.serializers import ActividadSerializer,DetalleDimensionSerializers,TareaAsignadaSerializers
 from Usuarios.serializers import AlumnoSerializer
 
 
@@ -39,6 +39,62 @@ def crear_actividad(request):
         "mensaje": "Ocurrió un problema al registrar la actividad",
         "errores": serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def crear_tareas(request):
+    id_paralelo = request.data.get("id_cursoparalelo")
+    gestion = request.data.get("gestion")
+
+    if not id_paralelo or not gestion:
+        return Response(
+            {"error": "Faltan parámetros 'id_cursoparalelo' o 'gestion'."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    alumnos = Alumno.objects.filter(
+        alumnocursoparalelo__curso_paralelo_id=id_paralelo,
+        libreta__detalle_trimestre__gestion=gestion
+    ).distinct()
+
+    if not alumnos.exists():
+        return Response(
+            {"mensaje": "No se encontraron alumnos para esa gestión y curso-paralelo."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    data_base = request.data.copy()
+    tareas_creadas = []
+    errores = []
+
+    for alumno in alumnos:
+        data = data_base.copy()
+        data["alumno"] = alumno.id
+
+        serializer = TareaAsignadaSerializers(data=data)
+        if serializer.is_valid():
+            tarea = serializer.save()
+            tareas_creadas.append({
+                "alumno": alumno.id,
+                "tarea_id": tarea.id
+            })
+        else:
+            errores.append({
+                "alumno": alumno.id,
+                "errores": serializer.errors
+            })
+
+    if tareas_creadas:
+        return Response({
+            "mensaje": "Tareas asignadas correctamente.",
+            "total_asignadas": len(tareas_creadas),
+            "tareas": tareas_creadas,
+            "errores": errores
+        }, status=status.HTTP_201_CREATED if not errores else status.HTTP_207_MULTI_STATUS)
+    else:
+        return Response({
+            "mensaje": "No se pudo asignar ninguna tarea.",
+            "errores": errores
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def obtener_tareas(request):
