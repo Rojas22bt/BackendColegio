@@ -233,11 +233,10 @@ class DetalleDimension(models.Model):
         return f"{self.actividad} - {self.dimension}"
 
 class TareaAsignada(models.Model):
+    descripcion = models.CharField(max_length=150,null=True)
     puntaje = models.IntegerField()
     fecha_inicio = models.DateField()
     fecha_entrega = models.DateField()
-    hora_inicio = models.TimeField()
-    hora_fin = models.TimeField()
     estado = models.BooleanField()
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE)
     alumno = models.ForeignKey('Alumno', on_delete=models.CASCADE)
