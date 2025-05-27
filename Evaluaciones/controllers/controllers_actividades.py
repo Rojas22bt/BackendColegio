@@ -115,5 +115,10 @@ def obtener_tareas(request):
         "cantidad_alumnos": alumnos.count(),
         "alumnos": serializer.data
     }, status=status.HTTP_200_OK)
-    
+
+@api_view(['GET'])
+def obtener_actividades(request):
+    actividades = Actividad.objects.all()
+    serializer = ActividadSerializer(actividades,many=True)
+    return Response(serializer.data,status=status.HTTP_200_OK)
         

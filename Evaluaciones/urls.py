@@ -1,7 +1,7 @@
 from django.urls import path
 from .controllers.controllers_dimension import crear_dimension,obtener_dimensiones,actualizar_dimension,eliminar_dimension
 from .controllers.controller_asistencia import crear_asistencia,actualizar_asistencia
-from .controllers.controllers_actividades import crear_actividad, obtener_tareas,crear_tareas
+from .controllers.controllers_actividades import crear_actividad, obtener_tareas,crear_tareas,obtener_actividades
 
 urlpatterns = [
     path('crear-dimension/', crear_dimension),
@@ -15,5 +15,6 @@ urlpatterns = [
     path('crear-nueva-actividad/', crear_actividad),
     path('crear-nueva-tarea/', crear_tareas),
     path('obtener-tarea/', obtener_tareas),
+    path('obtener-actividades/', obtener_actividades),
        
 ]
