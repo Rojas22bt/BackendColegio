@@ -145,10 +145,20 @@ def obtener_tareas_asignadas(request):
     id_paralelo = request.query_params.get("id_cursoparalelo")
     gestion = request.query_params.get("gestion")
     id_horario = request.query_params.get("horario_materia")
+    fecha_inicio = request.query_params.get("fecha_inicio")
+    fecha_fin = request.query_params.get("fecha_fin")
 
     if not id_paralelo or not gestion or not id_horario:
         return Response({
             "error": "Faltan parámetros: id_cursoparalelo, gestion o horario_materia"
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        fecha_inicio_dt = datetime.strptime(fecha_inicio, "%Y-%m-%d") if fecha_inicio else None
+        fecha_fin_dt = datetime.strptime(fecha_fin, "%Y-%m-%d") if fecha_fin else None
+    except ValueError:
+        return Response({
+            "error": "Las fechas deben tener el formato YYYY-MM-DD"
         }, status=status.HTTP_400_BAD_REQUEST)
 
     # Obtener alumnos según paralelo y gestión
@@ -164,11 +174,20 @@ def obtener_tareas_asignadas(request):
 
     resultado = []
     for alumno in alumnos:
-        tareas = TareaAsignada.objects.filter(
+        tareas_qs = TareaAsignada.objects.filter(
             alumno=alumno,
             horario_materia_id=id_horario
         )
-        tareas_serializer = TareaAsignadaSerializers(tareas, many=True)
+
+        # ✅ Aplicar filtros por fecha si se especificaron
+        if fecha_inicio_dt and fecha_fin_dt:
+            tareas_qs = tareas_qs.filter(fecha_entrega__range=(fecha_inicio_dt, fecha_fin_dt))
+        elif fecha_inicio_dt:
+            tareas_qs = tareas_qs.filter(fecha_entrega__gte=fecha_inicio_dt)
+        elif fecha_fin_dt:
+            tareas_qs = tareas_qs.filter(fecha_entrega__lte=fecha_fin_dt)
+
+        tareas_serializer = TareaAsignadaSerializers(tareas_qs, many=True)
         resultado.append({
             "alumno_id": alumno.alumno_id,
             "nombre": alumno.alumno.nombre,
