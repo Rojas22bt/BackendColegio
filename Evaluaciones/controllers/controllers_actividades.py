@@ -6,6 +6,21 @@ from BaseDatosColegio.models import Alumno,Profesor,Materia,CursoParalelo,Horari
 from Evaluaciones.serializers import ActividadSerializer,DetalleDimensionSerializers,TareaAsignadaSerializers,DimensionSerializers
 from Usuarios.serializers import AlumnoSerializer
 
+@api_view(['PUT'])
+def actualizar_tareas(request):
+    updates = []
+    for item in request.data:
+        try:
+            tarea = TareaAsignada.objects.get(id=item['id'])
+            tarea.puntaje = item.get('puntaje', tarea.puntaje)
+            updates.append(tarea)
+        except TareaAsignada.DoesNotExist:
+            return Response({'error': f"Tarea con ID {item['id']} no existe."}, status=404)
+
+    TareaAsignada.objects.bulk_update(updates, ['puntaje'])
+    return Response({"mensaje": "notas actualizadas"}, status=200)
+
+
 
 @api_view(['POST'])
 def crear_actividad(request):

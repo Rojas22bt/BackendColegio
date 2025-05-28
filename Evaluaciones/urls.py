@@ -7,7 +7,8 @@ from .controllers.controllers_actividades import (
     crear_tareas,
     obtener_actividades,
     obtener_tareas_asignadas,
-    obtener_dimensiones_actividades_tareas
+    obtener_dimensiones_actividades_tareas,
+    actualizar_tareas,
 
     ) 
 urlpatterns = [
@@ -25,5 +26,6 @@ urlpatterns = [
     path('obtener-actividades/', obtener_actividades),
     path('obtener-actividades-curso/', obtener_tareas_asignadas),
     path('obtener-actividades-curso2/', obtener_dimensiones_actividades_tareas),
+    path('actualizar-tareas/', actualizar_tareas),
        
 ]
