@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 from BaseDatosColegio.models import Alumno,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,DescripcionMateria,Actividad,Dimension,DetalleDimension,TareaAsignada
 from Evaluaciones.serializers import ActividadSerializer,DetalleDimensionSerializers,TareaAsignadaSerializers,DimensionSerializers
 from Usuarios.serializers import AlumnoSerializer
@@ -161,7 +161,7 @@ def obtener_tareas_asignadas(request):
 
     return Response(resultado, status=status.HTTP_200_OK)
 @api_view(['GET'])
-def obtener_dimensiones_tareas_formateadas(request):
+def obtener_dimensiones_actividades_tareas(request):
     id_paralelo = request.query_params.get("id_cursoparalelo")
     gestion = request.query_params.get("gestion")
     id_horario = request.query_params.get("horario_materia")
@@ -171,7 +171,7 @@ def obtener_dimensiones_tareas_formateadas(request):
             "error": "Faltan parámetros: id_cursoparalelo, gestion o horario_materia"
         }, status=status.HTTP_400_BAD_REQUEST)
 
-    dimensiones_dict = defaultdict(set)
+    resultado = []
 
     dimensiones = Dimension.objects.all()
     for dimension in dimensiones:
@@ -179,6 +179,7 @@ def obtener_dimensiones_tareas_formateadas(request):
             id__in=DetalleDimension.objects.filter(dimension=dimension).values_list('actividad_id', flat=True)
         )
 
+        actividades_data = []
         for actividad in actividades:
             tareas = TareaAsignada.objects.filter(
                 actividad=actividad,
@@ -187,22 +188,32 @@ def obtener_dimensiones_tareas_formateadas(request):
                 alumno__libreta__detalle_trimestre__gestion=gestion
             ).distinct()
 
+            # ✅ Filtrar una tarea por cada descripción única
             tareas_unicas = OrderedDict()
             for tarea in tareas:
                 if tarea.descripcion not in tareas_unicas:
                     tareas_unicas[tarea.descripcion] = tarea
 
-            for tarea in tareas_unicas.values():
-                tipo = "TAREA" if "tarea" in tarea.descripcion.lower() else "ACTIVIDAD"
-                item = f"{tipo} {tarea.descripcion.strip().capitalize()}"
-                dimensiones_dict[dimension.descripcion.upper()].add(item)
+            tareas_serializadas = TareaAsignadaSerializers(tareas_unicas.values(), many=True).data
 
-    # Convertimos los sets a listas ordenadas
-    resultado_final = {
-        key: sorted(list(val)) for key, val in dimensiones_dict.items()
-    }
+            actividades_data.append({
+                "id": actividad.id,
+                "nombre": actividad.nombre,
+                "estado": actividad.estado,
+                "tareas": tareas_serializadas
+            })
 
-    return Response(resultado_final, status=status.HTTP_200_OK)
+        resultado.append({
+            "dimension": {
+                "id": dimension.id,
+                "descripcion": dimension.descripcion,
+                "puntaje": dimension.puntaje
+            },
+            "actividades": actividades_data
+        })
+
+    return Response(resultado, status=status.HTTP_200_OK)
+
 
 # @api_view(['GET'])
 # def obtener_tareas_y_actividades_por_horario(request):
