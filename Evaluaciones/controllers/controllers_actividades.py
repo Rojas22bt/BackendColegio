@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from collections import OrderedDict
+from datetime import datetime
 from BaseDatosColegio.models import Alumno,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,DescripcionMateria,Actividad,Dimension,DetalleDimension,TareaAsignada
 from Evaluaciones.serializers import ActividadSerializer,DetalleDimensionSerializers,TareaAsignadaSerializers,DimensionSerializers
 from Usuarios.serializers import AlumnoSerializer
@@ -175,20 +176,31 @@ def obtener_tareas_asignadas(request):
         })
 
     return Response(resultado, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 def obtener_dimensiones_actividades_tareas(request):
     id_paralelo = request.query_params.get("id_cursoparalelo")
     gestion = request.query_params.get("gestion")
     id_horario = request.query_params.get("horario_materia")
+    fecha_inicio = request.query_params.get("fecha_inicio")
+    fecha_fin = request.query_params.get("fecha_fin")
 
     if not id_paralelo or not gestion or not id_horario:
         return Response({
             "error": "Faltan parámetros: id_cursoparalelo, gestion o horario_materia"
         }, status=status.HTTP_400_BAD_REQUEST)
 
-    resultado = []
+    try:
+        fecha_inicio_dt = datetime.strptime(fecha_inicio, "%Y-%m-%d") if fecha_inicio else None
+        fecha_fin_dt = datetime.strptime(fecha_fin, "%Y-%m-%d") if fecha_fin else None
+    except ValueError:
+        return Response({
+            "error": "Las fechas deben tener el formato YYYY-MM-DD"
+        }, status=status.HTTP_400_BAD_REQUEST)
 
+    resultado = []
     dimensiones = Dimension.objects.all()
+
     for dimension in dimensiones:
         actividades = Actividad.objects.filter(
             id__in=DetalleDimension.objects.filter(dimension=dimension).values_list('actividad_id', flat=True)
@@ -196,16 +208,23 @@ def obtener_dimensiones_actividades_tareas(request):
 
         actividades_data = []
         for actividad in actividades:
-            tareas = TareaAsignada.objects.filter(
+            tareas_qs = TareaAsignada.objects.filter(
                 actividad=actividad,
                 horario_materia_id=id_horario,
                 alumno__alumnocursoparalelo__curso_paralelo_id=id_paralelo,
                 alumno__libreta__detalle_trimestre__gestion=gestion
             ).distinct()
 
-            # ✅ Filtrar una tarea por cada descripción única
+            # ✅ Aplicar filtro por fechas si se proporcionaron
+            if fecha_inicio_dt and fecha_fin_dt:
+                tareas_qs = tareas_qs.filter(fecha_entrega__range=(fecha_inicio_dt, fecha_fin_dt))
+            elif fecha_inicio_dt:
+                tareas_qs = tareas_qs.filter(fecha_entrega__gte=fecha_inicio_dt)
+            elif fecha_fin_dt:
+                tareas_qs = tareas_qs.filter(fecha_entrega__lte=fecha_fin_dt)
+
             tareas_unicas = OrderedDict()
-            for tarea in tareas:
+            for tarea in tareas_qs:
                 if tarea.descripcion not in tareas_unicas:
                     tareas_unicas[tarea.descripcion] = tarea
 
@@ -228,6 +247,60 @@ def obtener_dimensiones_actividades_tareas(request):
         })
 
     return Response(resultado, status=status.HTTP_200_OK)
+
+# @api_view(['GET'])
+# def obtener_dimensiones_actividades_tareas(request):
+#     id_paralelo = request.query_params.get("id_cursoparalelo")
+#     gestion = request.query_params.get("gestion")
+#     id_horario = request.query_params.get("horario_materia")
+
+#     if not id_paralelo or not gestion or not id_horario:
+#         return Response({
+#             "error": "Faltan parámetros: id_cursoparalelo, gestion o horario_materia"
+#         }, status=status.HTTP_400_BAD_REQUEST)
+
+#     resultado = []
+
+#     dimensiones = Dimension.objects.all()
+#     for dimension in dimensiones:
+#         actividades = Actividad.objects.filter(
+#             id__in=DetalleDimension.objects.filter(dimension=dimension).values_list('actividad_id', flat=True)
+#         )
+
+#         actividades_data = []
+#         for actividad in actividades:
+#             tareas = TareaAsignada.objects.filter(
+#                 actividad=actividad,
+#                 horario_materia_id=id_horario,
+#                 alumno__alumnocursoparalelo__curso_paralelo_id=id_paralelo,
+#                 alumno__libreta__detalle_trimestre__gestion=gestion
+#             ).distinct()
+
+#             # ✅ Filtrar una tarea por cada descripción única
+#             tareas_unicas = OrderedDict()
+#             for tarea in tareas:
+#                 if tarea.descripcion not in tareas_unicas:
+#                     tareas_unicas[tarea.descripcion] = tarea
+
+#             tareas_serializadas = TareaAsignadaSerializers(tareas_unicas.values(), many=True).data
+
+#             actividades_data.append({
+#                 "id": actividad.id,
+#                 "nombre": actividad.nombre,
+#                 "estado": actividad.estado,
+#                 "tareas": tareas_serializadas
+#             })
+
+#         resultado.append({
+#             "dimension": {
+#                 "id": dimension.id,
+#                 "descripcion": dimension.descripcion,
+#                 "puntaje": dimension.puntaje
+#             },
+#             "actividades": actividades_data
+#         })
+
+#     return Response(resultado, status=status.HTTP_200_OK)
 
 
 # @api_view(['GET'])
