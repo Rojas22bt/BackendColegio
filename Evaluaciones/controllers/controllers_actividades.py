@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from BaseDatosColegio.models import Alumno,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,DescripcionMateria,Actividad,Dimension,DetalleDimension,TareaAsignada
-from Evaluaciones.serializers import ActividadSerializer,DetalleDimensionSerializers,TareaAsignadaSerializers
+from Evaluaciones.serializers import ActividadSerializer,DetalleDimensionSerializers,TareaAsignadaSerializers,DimensionSerializers
 from Usuarios.serializers import AlumnoSerializer
 
 
@@ -156,6 +156,66 @@ def obtener_tareas_asignadas(request):
             "alumno_id": alumno.alumno_id,
             "nombre": alumno.alumno.nombre,
             "tareas": tareas_serializer.data
+        })
+
+    return Response(resultado, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def obtener_tareas_y_actividades_por_horario(request):
+    id_paralelo = request.query_params.get("id_cursoparalelo")
+    gestion = request.query_params.get("gestion")
+    id_horario = request.query_params.get("horario_materia")
+
+    if not id_paralelo or not gestion or not id_horario:
+        return Response({
+            "error": "Faltan parámetros: id_cursoparalelo, gestion o horario_materia"
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    alumnos = Alumno.objects.filter(
+        alumnocursoparalelo__curso_paralelo_id=id_paralelo,
+        libreta__detalle_trimestre__gestion=gestion
+    ).distinct()
+
+    if not alumnos.exists():
+        return Response({
+            "mensaje": "No se encontraron alumnos para esa gestión, curso-paralelo y horario."
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    resultado = []
+
+    for alumno in alumnos:
+        tareas = TareaAsignada.objects.filter(
+            alumno=alumno,
+            horario_materia_id=id_horario
+        ).select_related('actividad')
+
+        tareas_info = []
+        for tarea in tareas:
+            # Obtener dimensiones relacionadas a la actividad
+            detalles = DetalleDimension.objects.filter(actividad=tarea.actividad)
+            dimensiones = DimensionSerializers([detalle.dimension for detalle in detalles], many=True).data
+
+            tarea_data = {
+                "id": tarea.id,
+                "descripcion": tarea.descripcion,
+                "puntaje": tarea.puntaje,
+                "fecha_inicio": tarea.fecha_inicio,
+                "fecha_entrega": tarea.fecha_entrega,
+                "estado": tarea.estado,
+                "actividad": {
+                    "id": tarea.actividad.id,
+                    "nombre": tarea.actividad.nombre,
+                    "estado": tarea.actividad.estado,
+                    "dimensiones": dimensiones
+                }
+            }
+            tareas_info.append(tarea_data)
+
+        resultado.append({
+            "alumno_id": alumno.alumno_id,
+            "nombre": alumno.alumno.nombre,
+            "tareas": tareas_info
         })
 
     return Response(resultado, status=status.HTTP_200_OK)
