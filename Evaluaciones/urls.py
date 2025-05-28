@@ -1,8 +1,15 @@
 from django.urls import path
 from .controllers.controllers_dimension import crear_dimension,obtener_dimensiones,actualizar_dimension,eliminar_dimension
 from .controllers.controller_asistencia import crear_asistencia,actualizar_asistencia
-from .controllers.controllers_actividades import crear_actividad, obtener_tareas,crear_tareas,obtener_actividades,obtener_tareas_asignadas,obtener_tareas_y_actividades_por_horario
+from .controllers.controllers_actividades import (
+    crear_actividad,
+    obtener_tareas,
+    crear_tareas,
+    obtener_actividades,
+    obtener_tareas_asignadas,
+    obtener_dimensiones_actividades_tareas
 
+    ) 
 urlpatterns = [
     path('crear-dimension/', crear_dimension),
     path('obtener-dimensiones/', obtener_dimensiones),
@@ -17,6 +24,6 @@ urlpatterns = [
     path('obtener-tarea/', obtener_tareas),
     path('obtener-actividades/', obtener_actividades),
     path('obtener-actividades-curso/', obtener_tareas_asignadas),
-    path('obtener-actividades-curso2/', obtener_tareas_y_actividades_por_horario),
+    path('obtener-actividades-curso2/', obtener_dimensiones_actividades_tareas),
        
 ]
