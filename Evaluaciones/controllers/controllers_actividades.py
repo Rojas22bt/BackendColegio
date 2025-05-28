@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from collections import OrderedDict
 from BaseDatosColegio.models import Alumno,Profesor,Materia,CursoParalelo,Horario,HorarioMateria,DescripcionMateria,Actividad,Dimension,DetalleDimension,TareaAsignada
 from Evaluaciones.serializers import ActividadSerializer,DetalleDimensionSerializers,TareaAsignadaSerializers,DimensionSerializers
 from Usuarios.serializers import AlumnoSerializer
@@ -159,7 +160,6 @@ def obtener_tareas_asignadas(request):
         })
 
     return Response(resultado, status=status.HTTP_200_OK)
-
 @api_view(['GET'])
 def obtener_dimensiones_actividades_tareas(request):
     id_paralelo = request.query_params.get("id_cursoparalelo")
@@ -188,7 +188,13 @@ def obtener_dimensiones_actividades_tareas(request):
                 alumno__libreta__detalle_trimestre__gestion=gestion
             ).distinct()
 
-            tareas_serializadas = TareaAsignadaSerializers(tareas, many=True).data
+            # ✅ Filtrar una tarea por cada descripción única
+            tareas_unicas = OrderedDict()
+            for tarea in tareas:
+                if tarea.descripcion not in tareas_unicas:
+                    tareas_unicas[tarea.descripcion] = tarea
+
+            tareas_serializadas = TareaAsignadaSerializers(tareas_unicas.values(), many=True).data
 
             actividades_data.append({
                 "id": actividad.id,
