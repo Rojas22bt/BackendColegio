@@ -92,36 +92,47 @@ def obtener_nota_materia(horario_id, fecha_inicio, fecha_final, alumno_id):
     resultado = []
 
     for dimension in dimensiones:
-        # Obtiene IDs de actividades vinculadas a la dimensión
+        # IDs de actividades de la dimensión
         actividades_ids = DetalleDimension.objects.filter(
             dimension_id=dimension.id
         ).values_list('actividad_id', flat=True)
 
-        # Recupera las actividades completas
+        # Obtén todas las actividades relacionadas
         actividades = Actividad.objects.filter(id__in=actividades_ids)
 
-        # Filtra tareas del alumno para esas actividades, en rango fechas y horario_materia
-        tareas_de_dimension = TareaAsignada.objects.filter(
+        # Filtra tareas de alumno para estas actividades, rango fechas y horario
+        tareas = TareaAsignada.objects.filter(
             fecha_inicio__gte=fecha_inicio,
             fecha_entrega__lte=fecha_final,
             alumno_id=alumno_id,
             horario_materia_id=horario_id,
             actividad_id__in=actividades_ids,
-            estado=True  # Opcional: solo tareas activas
+            estado=True
         )
 
-        total_puntaje = sum(t.puntaje for t in tareas_de_dimension)
-        cantidad = tareas_de_dimension.count()
+        total_puntaje = sum(t.puntaje for t in tareas)
+        cantidad = tareas.count()
         promedio = total_puntaje / cantidad if cantidad > 0 else None
 
-        # Serializa las actividades que quieres mostrar
-        actividades_data = [
-            {
+        # Para cada actividad, filtrar sus tareas específicas
+        actividades_data = []
+        for act in actividades:
+            tareas_actividad = tareas.filter(actividad_id=act.id)
+            tareas_data = [
+                {
+                    "id": t.id,
+                    "descripcion": t.descripcion,
+                    "puntaje": t.puntaje,
+                    "fecha_inicio": t.fecha_inicio,
+                    "fecha_entrega": t.fecha_entrega,
+                    "estado": t.estado,
+                } for t in tareas_actividad
+            ]
+            actividades_data.append({
                 "id": act.id,
                 "nombre": act.nombre,
-                # agrega más campos si quieres
-            } for act in actividades
-        ]
+                "tareas": tareas_data
+            })
 
         resultado.append({
             "dimension_id": dimension.id,
@@ -133,7 +144,6 @@ def obtener_nota_materia(horario_id, fecha_inicio, fecha_final, alumno_id):
         })
 
     return resultado
-
 
   
     
