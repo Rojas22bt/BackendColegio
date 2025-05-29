@@ -46,17 +46,20 @@ def obtener_notas_del_alumno(request, id, gestion):
             curso_paralelo_id=alumno_cursoparalelo.curso_paralelo_id,
             descripcion_materia__materia_id=materia_asignada.materia_id
         )
-        horarios_data = [
+        if horarios.exists():
+            horarios_data = [
             {
                 "hora_inicial": h.horario.hora_inicial if h.horario else None,
                 "hora_final": h.horario.hora_final if h.horario else None
             } for h in horarios
         ]
+        else:
+            horarios_data = None  # o [] si prefieres lista vacía
 
         resultado.append({
-            "materia_id": materia_asignada.materia_id,
-            "curso_id": materia_asignada.curso_id,
-            "horarios": horarios_data
+        "materia_id": materia_asignada.materia_id,
+        "curso_id": materia_asignada.curso_id,
+        "horarios": horarios_data
         })
     
     return Response(resultado, status=status.HTTP_200_OK)
