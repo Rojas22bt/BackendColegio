@@ -13,7 +13,7 @@ from Academia.serializers import MateriaAsignadaSerializer
 @api_view(['GET'])
 def obtener_notas_del_alumno(request, id, gestion):
     try:
-        alumno = Alumno.objects.get(id=id)
+        alumno = Alumno.objects.get(alumno_id=id)
     except Alumno.DoesNotExist:
         return Response({"mensaje": "El usuario no existe"}, status=status.HTTP_404_NOT_FOUND)
     
