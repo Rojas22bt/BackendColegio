@@ -15,7 +15,7 @@ def obtener_notas_del_alumno(request, id, gestion):
     try:
         alumno = Alumno.objects.get(alumno_id=id)
     except Alumno.DoesNotExist:
-        return Response({"mensaje": "El usuario no existe"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"mensaje": "El alumno no existe"}, status=status.HTTP_404_NOT_FOUND)
     
     libretas = Libreta.objects.filter(
         alumno_id=id,
@@ -39,9 +39,27 @@ def obtener_notas_del_alumno(request, id, gestion):
         curso_id=obtener_curso.curso_id
     )
     
-    serializer = MateriaAsignadaSerializer(obtener_materias, many=True)
+    resultado = []
     
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    for materia_asignada in obtener_materias:
+        horarios = HorarioMateria.objects.get(
+            curso_paralelo_id=alumno_cursoparalelo.curso_paralelo_id,
+            descripcion_materia__materia_id=materia_asignada.materia_id
+        )
+        horarios_data = [
+            {
+                "hora_inicial": h.horario.hora_inicial if h.horario else None,
+                "hora_final": h.horario.hora_final if h.horario else None
+            } for h in horarios
+        ]
+
+        resultado.append({
+            "materia_id": materia_asignada.materia_id,
+            "curso_id": materia_asignada.curso_id,
+            "horarios": horarios_data
+        })
+    
+    return Response(resultado, status=status.HTTP_200_OK)
 
         
     
