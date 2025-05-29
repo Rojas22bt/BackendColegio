@@ -7,25 +7,43 @@ from BaseDatosColegio.models import (
     AlumnoCursoParalelo, HorarioMateria, DescripcionMateria,Profesor,
     TareaAsignada,Alumno,Actividad,Gestion,DetalleTrimestre,
     Libreta,DetalleDimension)
-from Evaluaciones.serializers import DimensionSerializers
+from Academia.serializers import MateriaAsignadaSerializer
 
 
 @api_view(['GET'])
-def obtener_notas_del_alumno(request,id,gestion):
+def obtener_notas_del_alumno(request, id, gestion):
     try:
         alumno = Alumno.objects.get(id=id)
     except Alumno.DoesNotExist:
         return Response({"mensaje": "El usuario no existe"}, status=status.HTTP_404_NOT_FOUND)
     
-    obtener_libretas = Libreta.objects.filter(
-        alumno_id = id,
-        detalle_trimestre__gestion = gestion
+    libretas = Libreta.objects.filter(
+        alumno_id=id,
+        detalle_trimestre__gestion__anio_escolar=gestion
     )
     
-    if not obtener_libretas.exists():
-         return Response({"mensaje": "El usuario no tiene llibretas"}, status=status.HTTP_404_NOT_FOUND)
+    if not libretas.exists():
+         return Response({"mensaje": "El usuario no tiene libretas"}, status=status.HTTP_404_NOT_FOUND)
     
-    obtener_alumnocursoparalelo = AlumnoCursoParalelo.objects.get()
+    try:
+        alumno_cursoparalelo = AlumnoCursoParalelo.objects.get(
+            alumno_id=id,
+            gestion_id=gestion
+        )
+    except AlumnoCursoParalelo.DoesNotExist:
+        return Response({"mensaje": "El alumno no está asignado a ningún curso paralelo en esta gestión"}, status=status.HTTP_404_NOT_FOUND)
+    
+    obtener_curso = CursoParalelo.objects.get(id=alumno_cursoparalelo.curso_paralelo_id)
+    
+    obtener_materias = MateriaAsignada.objects.filter(
+        curso_id=obtener_curso.curso_id
+    )
+    
+    serializer = MateriaAsignadaSerializer(obtener_materias, many=True)
+    
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+        
     
     
     

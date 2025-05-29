@@ -11,6 +11,7 @@ from .controllers.controllers_actividades import (
     actualizar_tareas,
 
     ) 
+from .controllers.controllers_calificaciones import obtener_notas_del_alumno
 urlpatterns = [
     path('crear-dimension/', crear_dimension),
     path('obtener-dimensiones/', obtener_dimensiones),
@@ -27,5 +28,7 @@ urlpatterns = [
     path('obtener-actividades-curso/', obtener_tareas_asignadas),
     path('obtener-actividades-curso2/', obtener_dimensiones_actividades_tareas),
     path('actualizar-tareas/', actualizar_tareas),
+    
+    path('obtener-notas/<int:id>/<int:gestion>/', obtener_notas_del_alumno),
        
 ]
