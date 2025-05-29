@@ -42,7 +42,7 @@ def obtener_notas_del_alumno(request, id, gestion):
     resultado = []
     
     for materia_asignada in obtener_materias:
-        horarios = HorarioMateria.objects.get(
+        horarios = HorarioMateria.objects.filter(
             curso_paralelo_id=alumno_cursoparalelo.curso_paralelo_id,
             descripcion_materia__materia_id=materia_asignada.materia_id
         )
