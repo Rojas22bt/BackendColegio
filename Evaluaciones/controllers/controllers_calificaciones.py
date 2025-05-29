@@ -102,13 +102,14 @@ def obtener_nota_materia(horario_id, fecha_inicio, fecha_final, alumno_id):
 
         # Filtra tareas de alumno para estas actividades, rango fechas y horario
         tareas = TareaAsignada.objects.filter(
-            fecha_inicio__gte=fecha_inicio,
-            fecha_entrega__lte=fecha_final,
-            alumno_id=alumno_id,
-            horario_materia_id=horario_id,
-            actividad_id__in=actividades_ids,
-            estado=True
+        fecha_inicio__lte=fecha_final,
+        fecha_entrega__gte=fecha_inicio,
+        alumno_id=alumno_id,
+        horario_materia_id=horario_id,
+        actividad_id__in=actividades_ids,
+        estado=True
         )
+
 
         total_puntaje = sum(t.puntaje for t in tareas)
         cantidad = tareas.count()
@@ -140,7 +141,9 @@ def obtener_nota_materia(horario_id, fecha_inicio, fecha_final, alumno_id):
             "total_puntaje": total_puntaje,
             "cantidad_tareas": cantidad,
             "promedio": promedio,
-            "actividades": actividades_data
+            "actividades": actividades_data,
+            "fecha_final": fecha_final,
+            "fecha_inicio": fecha_inicio
         })
 
     return resultado
