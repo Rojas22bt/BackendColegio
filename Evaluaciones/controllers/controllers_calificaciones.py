@@ -42,11 +42,13 @@ def obtener_notas_del_alumno(request, id, gestion):
     resultado = []
     
     for materia_asignada in obtener_materias:
+        horario_id = None
         horarios = HorarioMateria.objects.filter(
             curso_paralelo_id=alumno_cursoparalelo.curso_paralelo_id,
             descripcion_materia__materia_id=materia_asignada.materia_id
         )
         if horarios.exists():
+            horario_id = horarios.id
             horarios_data = [
             {
                 "hora_inicial": h.horario.hora_inicial if h.horario else None,
@@ -55,10 +57,12 @@ def obtener_notas_del_alumno(request, id, gestion):
         ]
         else:
             horarios_data = None  # o [] si prefieres lista vacía
+            horario_id = None
 
         resultado.append({
         "materia_id": materia_asignada.materia_id,
         "curso_id": materia_asignada.curso_id,
+        "horario_id": horario_id,
         "horarios": horarios_data
         })
     
