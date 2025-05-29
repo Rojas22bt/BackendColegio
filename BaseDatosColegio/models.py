@@ -173,6 +173,7 @@ class Alumno(models.Model):
 class AlumnoCursoParalelo(models.Model):
     curso_paralelo = models.ForeignKey(CursoParalelo, on_delete=models.CASCADE)
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
+    gestion_id = models.IntegerField(null=True)
 
     class Meta:
         unique_together = ('curso_paralelo', 'alumno')
