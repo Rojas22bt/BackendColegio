@@ -28,7 +28,6 @@ class PermisoDetalleSerializer(serializers.ModelSerializer):
         fields = ['id', 'rol', 'privilegio', 'estado']
 
 #PARA LO QUE TENGA QUE VER CON USUARIO
-
 class AlumnoSerializer(serializers.ModelSerializer):
     nombre_usuario = serializers.SerializerMethodField()
 
