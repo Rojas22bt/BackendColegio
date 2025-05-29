@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
 from BaseDatosColegio.models import (
     Dimension,Curso,Materia,Trimestre,
     MateriaAsignada,CursoParalelo,
@@ -48,40 +49,78 @@ def obtener_notas_del_alumno(request, id, gestion):
     
     serializer = TrimestreSerializers(trimestres,many=True)
     
-    
-    resultado = []
-    
-    for materia_asignada in obtener_materias:
-        horarios = HorarioMateria.objects.filter(
-            curso_paralelo_id=alumno_cursoparalelo.curso_paralelo_id,
-            descripcion_materia__materia_id=materia_asignada.materia_id
-        )
-        if horarios.exists():
-            horario_id = horarios.first().id
-            horarios_data = [
-                {
-                    "hora_inicial": h.horario.hora_inicial if h.horario else None,
-                    "hora_final": h.horario.hora_final if h.horario else None
-                } for h in horarios
-            ]
-            
-            
-        else:
-            horarios_data = None  # o [] si prefieres lista vacía
-            horario_id = None
+    for trimestre in trimestres:
+        
+        fecha_inicio = trimestre.fecha_inicio
+        fecha_fin = trimestre.fecha_final        
+        resultado = []
+        
+        for materia_asignada in obtener_materias:
+            horarios = HorarioMateria.objects.filter(
+                curso_paralelo_id=alumno_cursoparalelo.curso_paralelo_id,
+                descripcion_materia__materia_id=materia_asignada.materia_id
+            )
+            if horarios.exists():
+                horario_id = horarios.first().id
+                horarios_data = [
+                    {
+                        "hora_inicial": h.horario.hora_inicial if h.horario else None,
+                        "hora_final": h.horario.hora_final if h.horario else None
+                    } for h in horarios
+                ]
+                notas_dimension = obtener_nota_materia(horario_id, fecha_inicio, fecha_fin, id)
+                
+            else:
+                horarios_data = None  # o [] si prefieres lista vacía
+                horario_id = None
+                notas_dimension = []
 
-        resultado.append({
-        "materia_id": materia_asignada.materia_id,
-        "trimetre": serializer.data,
-        "curso_id": materia_asignada.curso_id,
-        "horario_id": horario_id,
-        "horarios": horarios_data
-        })
+            resultado.append({
+            "materia_id": materia_asignada.materia_id,
+            "trimetre": serializer.data,
+            "curso_id": materia_asignada.curso_id,
+            "horario_id": horario_id,
+            "horarios": horarios_data,
+            "notas_por_dimension": notas_dimension
+            })
     
     return Response(resultado, status=status.HTTP_200_OK)
 
         
-# def obtener_nota_materia(horario_id,hora_inicio,horario_fin,alumno_id):
-    
-    
+def obtener_nota_materia(horario_id, fecha_inicio, fecha_final, alumno_id):
+    dimensiones = Dimension.objects.all()
+    resultado = []
+
+    for dimension in dimensiones:
+        # Obtiene IDs de actividades vinculadas a la dimensión
+        actividades_ids = DetalleDimension.objects.filter(
+            dimension_id=dimension.id
+        ).values_list('actividad_id', flat=True)
+
+        # Filtra tareas del alumno para esas actividades, en rango fechas y horario_materia
+        tareas_de_dimension = TareaAsignada.objects.filter(
+            fecha_inicio__gte=fecha_inicio,
+            fecha_entrega__lte=fecha_final,
+            alumno_id=alumno_id,
+            horario_materia_id=horario_id,
+            actividad_id__in=actividades_ids,
+            estado=True  # Opcional: solo tareas activas
+        )
+
+        # Puedes calcular suma, promedio o cualquier agregación
+        total_puntaje = sum(t.puntaje for t in tareas_de_dimension)
+        cantidad = tareas_de_dimension.count()
+        promedio = total_puntaje / cantidad if cantidad > 0 else None
+
+        resultado.append({
+            "dimension_id": dimension.id,
+            "dimension_descripcion": dimension.descripcion,
+            "total_puntaje": total_puntaje,
+            "cantidad_tareas": cantidad,
+            "promedio": promedio
+        })
+
+    return resultado
+
+  
     
