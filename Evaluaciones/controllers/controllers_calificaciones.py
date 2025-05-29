@@ -42,13 +42,12 @@ def obtener_notas_del_alumno(request, id, gestion):
     resultado = []
     
     for materia_asignada in obtener_materias:
-        horario_id = None
         horarios = HorarioMateria.objects.filter(
             curso_paralelo_id=alumno_cursoparalelo.curso_paralelo_id,
             descripcion_materia__materia_id=materia_asignada.materia_id
         )
         if horarios.exists():
-            horario_id = horarios.id
+            horario_id = horarios.first().id
             horarios_data = [
             {
                 "hora_inicial": h.horario.hora_inicial if h.horario else None,
