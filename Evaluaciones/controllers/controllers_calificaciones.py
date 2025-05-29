@@ -97,6 +97,9 @@ def obtener_nota_materia(horario_id, fecha_inicio, fecha_final, alumno_id):
             dimension_id=dimension.id
         ).values_list('actividad_id', flat=True)
 
+        # Recupera las actividades completas
+        actividades = Actividad.objects.filter(id__in=actividades_ids)
+
         # Filtra tareas del alumno para esas actividades, en rango fechas y horario_materia
         tareas_de_dimension = TareaAsignada.objects.filter(
             fecha_inicio__gte=fecha_inicio,
@@ -107,20 +110,30 @@ def obtener_nota_materia(horario_id, fecha_inicio, fecha_final, alumno_id):
             estado=True  # Opcional: solo tareas activas
         )
 
-        # Puedes calcular suma, promedio o cualquier agregación
         total_puntaje = sum(t.puntaje for t in tareas_de_dimension)
         cantidad = tareas_de_dimension.count()
         promedio = total_puntaje / cantidad if cantidad > 0 else None
+
+        # Serializa las actividades que quieres mostrar
+        actividades_data = [
+            {
+                "id": act.id,
+                "nombre": act.nombre,
+                # agrega más campos si quieres
+            } for act in actividades
+        ]
 
         resultado.append({
             "dimension_id": dimension.id,
             "dimension_descripcion": dimension.descripcion,
             "total_puntaje": total_puntaje,
             "cantidad_tareas": cantidad,
-            "promedio": promedio
+            "promedio": promedio,
+            "actividades": actividades_data
         })
 
     return resultado
+
 
   
     
