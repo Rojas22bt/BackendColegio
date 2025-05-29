@@ -8,7 +8,7 @@ from BaseDatosColegio.models import (
     TareaAsignada,Alumno,Actividad,Gestion,DetalleTrimestre,
     Libreta,DetalleDimension)
 from Academia.serializers import MateriaAsignadaSerializer
-from Periodo.serializers import Trimestre
+from Periodo.serializers import TrimestreSerializers
 
 
 @api_view(['GET'])
@@ -46,7 +46,7 @@ def obtener_notas_del_alumno(request, id, gestion):
 
     trimestres = [detalle.trimestre for detalle in detalles]
     
-    serializer = Trimestre(trimestres,many=True)
+    serializer = TrimestreSerializers(trimestres,many=True)
     
     
     resultado = []
