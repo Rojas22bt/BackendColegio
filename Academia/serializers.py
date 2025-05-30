@@ -77,4 +77,4 @@ class LibretaSerializers(serializers.ModelSerializer):
 class AlumnoParaleloSerializers(serializers.ModelSerializer):
     class Meta:
         model = AlumnoCursoParalelo
-        fields= ['id','alumno','curso_paralelo']
+        fields= ['id','alumno','curso_paralelo','gestion_id']

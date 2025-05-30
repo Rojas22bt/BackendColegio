@@ -11,6 +11,7 @@ def crear_libreta(request):
     id_curso = request.data.get("curso")
     id_paralelo = request.data.get("paralelo")
     id_alumno = request.data.get("alumno")
+    anio_escolar = request.data.get("anio_escolar")
 
     # Validar curso-paralelo
     try:
@@ -52,7 +53,8 @@ def crear_libreta(request):
     if respuestas:
         data_alumno = {
             "alumno": id_alumno,
-            "curso_paralelo": curso_paralelo.id
+            "curso_paralelo": curso_paralelo.id,
+            "gestion_id":anio_escolar
         }
         serializer3 = AlumnoParaleloSerializers(data=data_alumno)
         if serializer3.is_valid():
