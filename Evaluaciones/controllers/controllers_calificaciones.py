@@ -102,8 +102,8 @@ def obtener_nota_materia(horario_id, fecha_inicio, fecha_final, alumno_id):
 
         # Filtra tareas de alumno para estas actividades, rango fechas y horario
         tareas = TareaAsignada.objects.filter(
-        fecha_entrega__gte=fecha_inicio,
-        fecha_inicio__lte=fecha_final,
+        fecha_inicio__gte=fecha_inicio,
+        fecha_entrega__lte=fecha_final,
         alumno_id=alumno_id,
         horario_materia_id=horario_id,
         actividad_id__in=actividades_ids,
