@@ -49,10 +49,10 @@ def obtener_notas_del_alumno(request, id, gestion):
     
     serializer = TrimestreSerializers(trimestres,many=True)
     
-    for trimestre in trimestres:
+    for trimestre in serializer.data:
         
-        fecha_inicio = trimestre.fecha_inicio
-        fecha_fin = trimestre.fecha_final        
+        fecha_inicio = trimestre.get("fecha_inicio")
+        fecha_fin = trimestre.get("fecha_final")        
         resultado = []
         
         for materia_asignada in obtener_materias:
