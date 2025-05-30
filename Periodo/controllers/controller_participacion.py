@@ -11,3 +11,12 @@ def crear_participacion(request):
         serializer.save()
         return Response({"mensaje":"todo okey", "data":serializer.data},status=status.HTTP_201_CREATED)
     return Response({"error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def obtener_participaciones(request,alumno,materia):
+    participacion = Participacion.objects.filter(
+        alumno = alumno,
+        materia = materia
+    )
+    serializer = ParticipacionSerializers(participacion,many=True)
+    return Response(serializer.data,status=status.HTTP_200_OK)
