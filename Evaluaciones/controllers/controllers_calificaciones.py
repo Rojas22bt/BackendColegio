@@ -49,11 +49,11 @@ def obtener_notas_del_alumno(request, id, gestion):
     
     serializer = TrimestreSerializers(trimestres,many=True)
     
+    resultado = []
+
     for trimestre in serializer.data:
-        
         fecha_inicio = trimestre.get("fecha_inicio")
         fecha_fin = trimestre.get("fecha_final")        
-        resultado = []
         
         for materia_asignada in obtener_materias:
             horarios = HorarioMateria.objects.filter(
@@ -71,19 +71,19 @@ def obtener_notas_del_alumno(request, id, gestion):
                 notas_dimension = obtener_nota_materia(horario_id, fecha_inicio, fecha_fin, id)
                 
             else:
-                horarios_data = None  # o [] si prefieres lista vacía
+                horarios_data = None
                 horario_id = None
                 notas_dimension = []
 
             resultado.append({
-            "materia_id": materia_asignada.materia_id,
-            "trimetre": serializer.data,
-            "curso_id": materia_asignada.curso_id,
-            "horario_id": horario_id,
-            "horarios": horarios_data,
-            "notas_por_dimension": notas_dimension
+                "materia_id": materia_asignada.materia_id,
+                "trimetre": trimestre,
+                "curso_id": materia_asignada.curso_id,
+                "horario_id": horario_id,
+                "horarios": horarios_data,
+                "notas_por_dimension": notas_dimension
             })
-    
+
     return Response(resultado, status=status.HTTP_200_OK)
 
         
