@@ -113,7 +113,8 @@ def obtener_nota_materia(horario_id, fecha_inicio, fecha_final, alumno_id):
 
         total_puntaje = sum(t.puntaje for t in tareas)
         cantidad = tareas.count()
-        promedio = total_puntaje / cantidad if cantidad > 0 else None
+        notaMayor = cantidad * 100
+        promedio = (total_puntaje* dimension.puntaje) /notaMayor if cantidad > 0 else None
 
         # Para cada actividad, filtrar sus tareas específicas
         actividades_data = []
