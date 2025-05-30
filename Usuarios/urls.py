@@ -1,5 +1,5 @@
 from django.urls import path
-from .controllers.controller_usuario import crear_usuario,obtener_usuarios,actualizar_usuario
+from .controllers.controller_usuario import crear_usuario,obtener_usuarios,actualizar_usuario,bulk_create_usuarios
 
 from .controllers.controller_permiso import (
     crear_rol,actualizar_rol,eliminar_rol,obtener_roles,obtener_roles_activos,
@@ -21,6 +21,9 @@ urlpatterns = [
     path('crearUsuario/', crear_usuario, name='crear_usuario'),
     path('obtenerUsuario/',obtener_usuarios),
     path('actualizarUsuario/<int:id>/',actualizar_usuario),
+    
+    #-----CREAR USUARIO POR CANTIDAD-----
+    path('crear-cantidad-usuario/', bulk_create_usuarios),
     
     #------URL PARA ROL-----
     path('crearRol/', crear_rol, name='crear_rol'),
