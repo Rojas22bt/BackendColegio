@@ -232,7 +232,7 @@ def obtener_dimensiones_actividades_tareas(request):
                 actividad=actividad,
                 horario_materia_id=id_horario,
                 alumno__alumnocursoparalelo__curso_paralelo_id=id_paralelo,
-                alumno__libreta__detalle_trimestre__gestion=gestion
+                alumno__alumnocursoparalelo__gestion_id=gestion
             ).distinct()
 
             # ✅ Aplicar filtro por fechas si se proporcionaron
