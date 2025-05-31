@@ -164,7 +164,7 @@ def obtener_tareas_asignadas(request):
     # Obtener alumnos según paralelo y gestión
     alumnos = Alumno.objects.filter(
         alumnocursoparalelo__curso_paralelo_id=id_paralelo,
-        libreta__detalle_trimestre__gestion=gestion
+        libreta__detalle_trimestre__gestion_id=gestion
     ).distinct()
 
     if not alumnos.exists():
