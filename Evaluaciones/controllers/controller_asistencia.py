@@ -7,11 +7,13 @@ from Evaluaciones.serializers import AsistenciaSerializers
 @api_view(['POST'])
 def obtener_asistencia_de_alumnos(request):
     resultado = []
-    
-    for alumno in request.data:
+
+    fecha = request.data.get("fecha")
+    alumnos = request.data.get("alumnos", [])
+
+    for alumno in alumnos:
         alumno_id = alumno.get("id")
-        fecha = alumno.get("fecha")
-        
+
         asistencias = Asistencia.objects.filter(
             alumno_id=alumno_id,
             fecha=fecha
@@ -32,6 +34,7 @@ def obtener_asistencia_de_alumnos(request):
                 })
 
     return Response(resultado, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def crear_asistencia(request):
