@@ -44,5 +44,5 @@ urlpatterns = [
     path('actualizarEstadoPermiso/',actualizar_estado_permiso),
     path('obtenerRolesAgrupados/',obtener_permiso_agrupados_por_rol),
     
-    path('obtener-alumnos/<int:gestion>/<int:id_paralelo>/',obtener_materia_horario_profesor),
+    path('obtener-alumnos/<int:gestion>/<int:id_paralelo>/',obtener_alumnos),
 ]
