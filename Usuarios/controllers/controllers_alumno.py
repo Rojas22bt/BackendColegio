@@ -11,7 +11,7 @@ def obtener_alumnos(request,gestion,id_paralelo):
         alumno__alumnocursoparalelo__curso_paralelo_id=id_paralelo,
         alumno__alumnocursoparalelo__gestion_id=gestion
     )
-    serializer = AlumnoSerializer(alumnos,many=True)
+    serializer = UsuarioSerializer(alumnos,many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)
     
     
