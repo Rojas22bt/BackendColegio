@@ -1,8 +1,37 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from BaseDatosColegio.models import Asistencia, Alumno
+from BaseDatosColegio.models import Asistencia
 from Evaluaciones.serializers import AsistenciaSerializers
+
+@api_view(['POST'])
+def obtener_asistencia_de_alumnos(request):
+    resultado = []
+    
+    for alumno in request.data:
+        alumno_id = alumno.get("id")
+        fecha = alumno.get("fecha")
+        
+        asistencias = Asistencia.objects.filter(
+            alumno_id=alumno_id,
+            fecha=fecha
+        )
+
+        if not asistencias.exists():
+            resultado.append({
+                "alumno_id": alumno_id,
+                "fecha": fecha,
+                "estado": "No hay registro"
+            })
+        else:
+            for asistencia in asistencias:
+                resultado.append({
+                    "alumno_id": alumno_id,
+                    "fecha": asistencia.fecha,
+                    "estado": asistencia.estado
+                })
+
+    return Response(resultado, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def crear_asistencia(request):
