@@ -49,9 +49,9 @@ def enviar_notificacion_firebase(titulo, mensaje, token):
 
 
 
-@api_view(['POST'])
+@csrf_exempt  # Primero este
+@api_view(['POST'])  # Luego este
 @permission_classes([AllowAny])
-@csrf_exempt
 def crear_notificacion_uni(request, id):
     try:
         usuario = Usuario.objects.get(id=id)
