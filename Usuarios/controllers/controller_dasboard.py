@@ -1,7 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from BaseDatosColegio.models import Usuario, Profesor, Alumno, TareaAsignada, Bitacora, CursoParalelo, AlumnoCursoParalelo
-from django.db.models import Avg, Count, Q
+from django.db.models import Avg, Count
+from django.db.models.functions import Least
 from datetime import date
 
 @api_view(['GET'])
@@ -17,16 +18,22 @@ def dashboard_stats(request):
         # Usuarios por rol (agrupado)
         usuarios_por_rol = Usuario.objects.values('rol__nombre').annotate(count=Count('id'))
 
-        # Tareas asignadas
+        # Tareas asignadas: limitar puntaje máximo a 100
+        tareas_activas = TareaAsignada.objects.filter(estado=True).annotate(
+            puntaje_limitado=Least('puntaje', 100)
+        )
         total_tareas = TareaAsignada.objects.count()
-        total_tareas_activas = TareaAsignada.objects.filter(estado=True).count()
-        promedio_puntaje_tareas = TareaAsignada.objects.filter(estado=True).aggregate(avg=Avg('puntaje'))['avg'] or 0
+        total_tareas_activas = tareas_activas.count()
+        promedio_puntaje_tareas = tareas_activas.aggregate(avg=Avg('puntaje_limitado'))['avg'] or 0
 
-        # Promedio tareas por alumno
-        tareas_por_alumno = TareaAsignada.objects.values('alumno').annotate(promedio=Avg('puntaje'))
+        # Promedio tareas por alumno con puntajes limitados a 100
+        tareas_por_alumno = tareas_activas.values('alumno').annotate(promedio=Avg('puntaje_limitado'))
         promedio_general_alumnos = 0
         if tareas_por_alumno:
             promedio_general_alumnos = sum([t['promedio'] for t in tareas_por_alumno]) / len(tareas_por_alumno)
+
+        if promedio_general_alumnos > 100:
+            promedio_general_alumnos = 100
 
         # Alumnos por curso paralelo
         alumnos_por_cursoparalelo = AlumnoCursoParalelo.objects.values(
@@ -47,8 +54,10 @@ def dashboard_stats(request):
         # Rango de edad
         hoy = date.today()
         edad_menor_18 = Usuario.objects.filter(fecha_nacimiento__gt=date(hoy.year - 18, hoy.month, hoy.day)).count()
-        edad_18_25 = Usuario.objects.filter(fecha_nacimiento__lte=date(hoy.year - 18, hoy.month, hoy.day),
-                                             fecha_nacimiento__gt=date(hoy.year - 25, hoy.month, hoy.day)).count()
+        edad_18_25 = Usuario.objects.filter(
+            fecha_nacimiento__lte=date(hoy.year - 18, hoy.month, hoy.day),
+            fecha_nacimiento__gt=date(hoy.year - 25, hoy.month, hoy.day)
+        ).count()
         edad_mas_25 = total_usuarios - edad_menor_18 - edad_18_25
 
         # Últimas 5 acciones en bitácora
