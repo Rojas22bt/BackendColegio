@@ -7,14 +7,18 @@ import firebase_admin
 from firebase_admin import credentials, messaging
 import os
 import json
+import tempfile
 
 if not firebase_admin._apps:
     try:
         firebase_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
         if firebase_json:
-            cred_dict = json.loads(firebase_json)
-            cred = credentials.Certificate(cred_dict)
-            firebase_admin.initialize_app(cred)
+            # ✅ Guardamos el contenido JSON temporalmente en un archivo
+            with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as temp_json:
+                temp_json.write(firebase_json)
+                temp_json.flush()
+                cred = credentials.Certificate(temp_json.name)
+                firebase_admin.initialize_app(cred)
         else:
             print("⚠️ No se encontró la variable FIREBASE_CREDENTIALS_JSON")
     except Exception as e:
