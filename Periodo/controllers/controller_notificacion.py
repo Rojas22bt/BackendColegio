@@ -5,11 +5,16 @@ from BaseDatosColegio.models import Notificacion, Usuario
 from Periodo.serializers import NotificacionSerializers
 import firebase_admin
 from firebase_admin import credentials, messaging
+from django.conf import settings
 
-# Inicializa Firebase solo una vez
-if not firebase_admin._apps:
-    cred = credentials.Certificate("firebase_cred.json")
-    firebase_admin.initialize_app(cred)
+cred_path = getattr(settings, 'FIREBASE_CREDENTIALS', None)
+
+if cred_path and not firebase_admin._apps:
+    try:
+        cred = credentials.Certificate(cred_path)
+        firebase_admin.initialize_app(cred)
+    except Exception as e:
+        print(f"Error al inicializar Firebase: {e}")
 
 def enviar_notificacion_firebase_por_tokens(titulo, mensaje, tokens):
     if not tokens:

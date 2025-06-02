@@ -18,6 +18,8 @@ import os
 
 load_dotenv()
 
+FIREBASE_CREDENTIALS = os.getenv("FIREBASE_CREDENTIALS")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
