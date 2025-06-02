@@ -54,6 +54,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     sexo = models.CharField(max_length=1, null=False)
     estado = models.BooleanField(default=True)
     telefono = models.CharField(max_length=15,default='12345678')
+    fcm_token = models.TextField(null=True, blank=True)
     rol = models.ForeignKey(Rol, on_delete=models.CASCADE, null=True)
 
     is_active = models.BooleanField(default=True)
