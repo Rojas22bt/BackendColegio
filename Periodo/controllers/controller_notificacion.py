@@ -66,11 +66,10 @@ def crear_notificacion_uni(request, id):
 
         if usuario.fcm_token and usuario.fcm_token.strip():
             try:
-                res = enviar_notificacion_firebase(titulo, mensaje, [usuario.fcm_token])
+                res = enviar_notificacion_firebase(titulo, mensaje, usuario.fcm_token)
                 firebase_resultado = {
-                    "enviado": res["enviados"] > 0,
-                    "fallos": res["fallos"],
-                    "detalle": str(res["detalle"][0].exception) if res["fallos"] > 0 else "OK"
+                    "enviado": res.get("enviado", False),
+                    "motivo": res.get("motivo", "OK" if res.get("enviado") else "Sin motivo")
                 }
             except Exception as e:
                 firebase_resultado = {
@@ -79,6 +78,7 @@ def crear_notificacion_uni(request, id):
                 }
         else:
             firebase_resultado["motivo"] = "Usuario sin token FCM"
+
 
         return Response({
             "mensaje": "Notificación creada",
