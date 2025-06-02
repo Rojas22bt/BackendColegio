@@ -1,10 +1,13 @@
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+from django.views.decorators.http import require_http_methods
+import json
 
 @csrf_exempt
+@require_http_methods(["POST"])
 def simple_post(request):
-    if request.method == 'POST':
-        return Response({'status': 'success'}, status=status.HTTP_200_OK)
-    return Response({'status': 'error', 'message': 'Only POST allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    try:
+        data = json.loads(request.body)
+        return JsonResponse({'status': 'success', 'received': data}, status=200)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
