@@ -50,16 +50,29 @@ def crear_notificacion_uni(request, id):
     if serializer.is_valid():
         serializer.save()
 
-        # Si el usuario tiene token, se envía la notificación por Firebase
-        firebase_resultado = None
+        titulo = data.get("titulo", "Notificación")
+        mensaje = data.get("mensaje", "")
+        firebase_resultado = {"enviado": False, "motivo": ""}
+
         if usuario.fcm_token and usuario.fcm_token.strip():
-            titulo = data.get("titulo", "Notificación")
-            mensaje = data.get("mensaje", "")
-            firebase_resultado = enviar_notificacion_firebase_por_tokens(titulo, mensaje, [usuario.fcm_token])
+            try:
+                res = enviar_notificacion_firebase_por_tokens(titulo, mensaje, [usuario.fcm_token])
+                firebase_resultado = {
+                    "enviado": res["enviados"] > 0,
+                    "fallos": res["fallos"],
+                    "detalle": str(res["detalle"][0].exception) if res["fallos"] > 0 else "OK"
+                }
+            except Exception as e:
+                firebase_resultado = {
+                    "enviado": False,
+                    "motivo": f"Error al enviar: {str(e)}"
+                }
+        else:
+            firebase_resultado["motivo"] = "Usuario sin token FCM"
 
         return Response({
             "mensaje": "Notificación creada",
-            "firebase": firebase_resultado if firebase_resultado else "No se envió por Firebase"
+            "firebase": firebase_resultado
         }, status=status.HTTP_201_CREATED)
 
     return Response({
