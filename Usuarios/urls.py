@@ -1,5 +1,6 @@
 from django.urls import path
 from .controllers.controller_usuario import crear_usuario,obtener_usuarios,actualizar_usuario,bulk_create_usuarios
+from .controllers.controller_dasboard import dashboard_stats
 
 from .controllers.controller_permiso import (
     crear_rol,actualizar_rol,eliminar_rol,obtener_roles,obtener_roles_activos,
@@ -46,4 +47,6 @@ urlpatterns = [
     path('obtenerMateriaProfesor/<int:id>/',obtener_materia_horario_profesor),
     
     path('obtener-alumnos/<int:gestion>/<int:id_paralelo>/',obtener_alumnos),
+    
+    path('api/dashboard-stats/', dashboard_stats),
 ]
