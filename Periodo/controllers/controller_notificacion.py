@@ -24,25 +24,19 @@ if not firebase_admin._apps:
     except Exception as e:
         print(f"🔥 Error al inicializar Firebase: {e}")
 
-def enviar_notificacion_firebase_por_tokens(titulo, mensaje, tokens):
-    if not tokens:
-        return {"enviados": 0, "mensaje": "No hay tokens para enviar"}
-
-    message = messaging.MulticastMessage(
+def enviar_notificacion_firebase(titulo, mensaje, token):
+    message = messaging.Message(
         notification=messaging.Notification(
             title=titulo,
             body=mensaje
         ),
-        tokens=tokens
+        token=token
     )
-
-    response = messaging.send_multicast(message)
+    response = messaging.send(message)
     return {
-        "enviados": response.success_count,
-        "fallos": response.failure_count,
-        "detalle": response.responses
+        "enviado": True,
+        "firebase_response": response
     }
-
 
 @api_view(['POST'])
 def crear_notificacion_uni(request, id):
@@ -64,7 +58,7 @@ def crear_notificacion_uni(request, id):
 
         if usuario.fcm_token and usuario.fcm_token.strip():
             try:
-                res = enviar_notificacion_firebase_por_tokens(titulo, mensaje, [usuario.fcm_token])
+                res = enviar_notificacion_firebase(titulo, mensaje, [usuario.fcm_token])
                 firebase_resultado = {
                     "enviado": res["enviados"] > 0,
                     "fallos": res["fallos"],
@@ -188,7 +182,7 @@ def crear_notificacion_flexible(request):
         # Preparar tokens solo para los que tienen fcm_token
         firebase_tokens = [u.fcm_token for u in usuarios if u.fcm_token.strip() != ""]
 
-        firebase_res = enviar_notificacion_firebase_por_tokens(titulo, mensaje, firebase_tokens)
+        firebase_res = enviar_notificacion_firebase(titulo, mensaje, firebase_tokens)
 
         return Response({
             "mensaje": f"Notificación enviada a todos.",
@@ -224,7 +218,7 @@ def crear_notificacion_flexible(request):
 
         firebase_res = {"enviados": 0, "fallos": 0}
         if enviar_firebase:
-            firebase_res = enviar_notificacion_firebase_por_tokens(titulo, mensaje, firebase_tokens)
+            firebase_res = enviar_notificacion_firebase(titulo, mensaje, firebase_tokens)
 
         return Response({
             "mensaje": f"Notificación enviada a usuarios del rol {id_rol}.",
