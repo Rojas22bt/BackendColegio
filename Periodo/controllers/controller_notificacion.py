@@ -5,16 +5,25 @@ from BaseDatosColegio.models import Notificacion, Usuario
 from Periodo.serializers import NotificacionSerializers
 import firebase_admin
 from firebase_admin import credentials, messaging
-from django.conf import settings
+import os
+import tempfile
 
-cred_path = getattr(settings, 'FIREBASE_CREDENTIALS', None)
-
-if cred_path and not firebase_admin._apps:
+if not firebase_admin._apps:
     try:
-        cred = credentials.Certificate(cred_path)
-        firebase_admin.initialize_app(cred)
+        # Obtenemos el JSON desde una variable de entorno (como string)
+        firebase_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
+
+        if firebase_json:
+            # Creamos archivo temporal a partir del string (reconstruyendo el JSON)
+            with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
+                f.write(firebase_json.replace('\\n', '\n'))
+                f.flush()
+                cred = credentials.Certificate(f.name)
+                firebase_admin.initialize_app(cred)
+        else:
+            print("⚠️ Variable FIREBASE_CREDENTIALS_JSON no está definida")
     except Exception as e:
-        print(f"Error al inicializar Firebase: {e}")
+        print(f"🔥 Error al inicializar Firebase: {e}")
 
 def enviar_notificacion_firebase_por_tokens(titulo, mensaje, tokens):
     if not tokens:
