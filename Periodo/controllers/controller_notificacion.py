@@ -5,18 +5,21 @@ from BaseDatosColegio.models import Notificacion, Usuario
 from Periodo.serializers import NotificacionSerializers
 import firebase_admin
 from firebase_admin import credentials, messaging
+import json
 import os
 import tempfile
 
 if not firebase_admin._apps:
     try:
-        # Obtenemos el JSON desde una variable de entorno (como string)
         firebase_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
 
         if firebase_json:
-            # Creamos archivo temporal a partir del string (reconstruyendo el JSON)
+            # Decodificamos el JSON en memoria directamente
+            firebase_dict = json.loads(firebase_json.replace('\\n', '\n'))
+
+            # Escribimos el dict en archivo temporal
             with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
-                f.write(firebase_json.replace('\\n', '\n'))
+                json.dump(firebase_dict, f)
                 f.flush()
                 cred = credentials.Certificate(f.name)
                 firebase_admin.initialize_app(cred)
