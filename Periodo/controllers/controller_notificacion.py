@@ -5,26 +5,18 @@ from BaseDatosColegio.models import Notificacion, Usuario
 from Periodo.serializers import NotificacionSerializers
 import firebase_admin
 from firebase_admin import credentials, messaging
-import json
 import os
-import tempfile
+import json
 
 if not firebase_admin._apps:
     try:
         firebase_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
-
         if firebase_json:
-            # Decodificamos el JSON en memoria directamente
-            firebase_dict = json.loads(firebase_json.replace('\\n', '\n'))
-
-            # Escribimos el dict en archivo temporal
-            with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
-                json.dump(firebase_dict, f)
-                f.flush()
-                cred = credentials.Certificate(f.name)
-                firebase_admin.initialize_app(cred)
+            cred_dict = json.loads(firebase_json)
+            cred = credentials.Certificate(cred_dict)
+            firebase_admin.initialize_app(cred)
         else:
-            print("⚠️ Variable FIREBASE_CREDENTIALS_JSON no está definida")
+            print("⚠️ No se encontró la variable FIREBASE_CREDENTIALS_JSON")
     except Exception as e:
         print(f"🔥 Error al inicializar Firebase: {e}")
 
