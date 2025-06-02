@@ -25,6 +25,9 @@ if not firebase_admin._apps:
         print(f"🔥 Error al inicializar Firebase: {e}")
 
 def enviar_notificacion_firebase(titulo, mensaje, token):
+    if not token or not isinstance(token, str):
+        return {"enviado": False, "motivo": "Token inválido o vacío"}
+
     message = messaging.Message(
         notification=messaging.Notification(
             title=titulo,
@@ -32,11 +35,16 @@ def enviar_notificacion_firebase(titulo, mensaje, token):
         ),
         token=token
     )
-    response = messaging.send(message)
-    return {
-        "enviado": True,
-        "firebase_response": response
-    }
+
+    try:
+        response = messaging.send(message)
+        return {
+            "enviado": True,
+            "firebase_response": response
+        }
+    except Exception as e:
+        return {"enviado": False, "motivo": f"Error al enviar: {e}"}
+
 
 @api_view(['POST'])
 def crear_notificacion_uni(request, id):
