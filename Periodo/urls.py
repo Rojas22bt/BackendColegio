@@ -5,6 +5,7 @@ from Periodo.controllers.controller_notificacion import crear_notificacion_uni,o
 from Periodo.controllers.controller_participacion import crear_participacion,obtener_participaciones
 from Periodo.controllers.controller_tokens import guardar_token
 from Periodo.controllers.prueba import simple_post
+from Periodo.controllers.controller_licencia import crear_licencia,obtner_licencias
 
 urlpatterns = [
     path('crear-trimestre/',crear_trimestre),
@@ -21,4 +22,7 @@ urlpatterns = [
     path('obtener-participacion/<int:alumno>/<int:materia>/',obtener_participaciones),
     path('guardar-nuevo-token/',guardar_token),
     path('test/', simple_post),
+    path('crear-licencia/', crear_licencia),
+    path('obtener-licencias/', obtner_licencias),
+    
 ]

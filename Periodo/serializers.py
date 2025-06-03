@@ -36,6 +36,13 @@ class NotificacionSerializers(serializers.ModelSerializer):
         fields = ['id','titulo','mensaje','fecha','estado','usuario']
     
 class LicenciaSerializers(serializers.ModelSerializer):
+    nombre_usuario = serializers.SerializerMethodField()
+
     class Meta:
         model = Licencia
         fields = ['id','descripcion','fecha','imagen','alumno']
+        
+    def get_nombre_usuario(self, obj):
+        return obj.usuario.nombre if obj.alumno else None
+    
+    
