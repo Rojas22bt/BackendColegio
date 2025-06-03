@@ -78,8 +78,9 @@ def obtener_asistencia_por_gestion(request, id):
         )
 
         resultado.append({
+            "year": gestion.anio_escolar,
             "gestion": gestion.anio_escolar,
-            "cantidad_asistencias": asistencias.count(),
+            "asistencia": asistencias.count(),
         })
 
     return Response(resultado, status=status.HTTP_200_OK)
