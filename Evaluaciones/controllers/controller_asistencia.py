@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from BaseDatosColegio.models import Asistencia, Gestion,Bitacora
+from BaseDatosColegio.models import Asistencia, Gestion,Bitacora,Usuario
 from django.db.models.functions import ExtractYear
 from Evaluaciones.serializers import AsistenciaSerializers
 
@@ -45,22 +45,33 @@ def obtener_asistencia_de_alumnos(request):
 
     return Response(resultado, status=status.HTTP_200_OK)
 
-
 @api_view(['POST'])
 def crear_asistencia(request):
-    serializer = AsistenciaSerializers(data = request.data)
-    usuario = request.data.get("alumno")
+    serializer = AsistenciaSerializers(data=request.data)
+    usuario_id = request.data.get("alumno")  # este es el ID del usuario
+    
     if serializer.is_valid():
         serializer.save()
         
+        # Obtener instancia del usuario
+        try:
+            usuario_instancia = Usuario.objects.get(id=usuario_id)
+        except Usuario.DoesNotExist:
+            usuario_instancia = None  # o manejar error de otra forma
+        
         # Bitácora
         ip = get_client_ip(request)
-        Bitacora.objects.create(
-            usuario=usuario,
-            accion="Inicio de sesión",
-            ip=ip
-        )
-        return Response(serializer.data,status=status.HTTP_201_CREATED)
+        if usuario_instancia:
+            Bitacora.objects.create(
+                usuario=usuario_instancia,
+                accion="Registro de asistencia",
+                ip=ip
+            )
+        else:
+            # Manejar caso usuario no encontrado o saltar bitácora
+            pass
+        
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     return Response({
         "mensaje": "Ocurrió algún problema al guardar la asistencia.",
