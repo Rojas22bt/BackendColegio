@@ -1,7 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from BaseDatosColegio.models import Asistencia
+from BaseDatosColegio.models import Asistencia, Gestion
+from django.db.models.functions import ExtractYear
 from Evaluaciones.serializers import AsistenciaSerializers
 
 @api_view(['POST'])
@@ -61,3 +62,24 @@ def actualizar_asistencia(request,id):
         return Response({"mensaje": "Asistencia actualizada correctamente", "data": serializer.data}, status=status.HTTP_200_OK)
     
     return Response({"mensaje": "Error de validación", "errores": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def obtener_asistencia_por_gestion(request, id):
+    resultado = []
+
+    gestiones = Gestion.objects.all()
+
+    for gestion in gestiones:
+        # Filtra asistencias cuyo año de la fecha coincide con gestion.anio_escolar
+        asistencias = Asistencia.objects.filter(
+            alumno_id=id,
+            fecha__year=gestion.anio_escolar
+        )
+
+        resultado.append({
+            "gestion": gestion.anio_escolar,
+            "cantidad_asistencias": asistencias.count(),
+        })
+
+    return Response(resultado, status=status.HTTP_200_OK)
