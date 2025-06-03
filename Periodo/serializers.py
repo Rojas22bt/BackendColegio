@@ -40,7 +40,7 @@ class LicenciaSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Licencia
-        fields = ['id','descripcion','fecha','imagen','alumno']
+        fields = ['id','descripcion','fecha','imagen','alumno','nombre_usuario']
         
     def get_nombre_usuario(self, obj):
         return obj.usuario.nombre if obj.alumno else None
