@@ -14,6 +14,8 @@ from .controllers.controller_profesor import obtener_materia_horario_profesor
 
 from .controllers.controllers_alumno import obtener_alumnos
 
+from .controllers.controller_bitacora import obtener_bitacora
+
 urlpatterns = [
     
     #-----URL LOGIN-----
@@ -49,4 +51,7 @@ urlpatterns = [
     path('obtener-alumnos/<int:gestion>/<int:id_paralelo>/',obtener_alumnos),
     
     path('api/dashboard-stats/', dashboard_stats),
+    
+    
+     path('obtener-bitacora/', obtener_bitacora),
 ]

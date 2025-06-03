@@ -3,9 +3,14 @@ from rest_framework import serializers
 
 #BITACORA
 class BitacoraSerializers(serializers.ModelSerializer):
+    nombre_usuario = serializers.SerializerMethodField()
+
     class Meta:
         model = Bitacora
-        fields = [ 'id','usuario','fecha','hora','ip','accion']
+        fields = [ 'id','usuario','fecha','hora','ip','accion','nombre_usuario']
+        
+    def get_nombre_usuario(self, obj):
+        return obj.usuario.nombre if obj.usuario else None
 
 #PARA LO QUE TENGA QUE VER CON PERMISOS
 
