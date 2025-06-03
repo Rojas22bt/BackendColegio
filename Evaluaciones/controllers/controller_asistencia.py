@@ -81,6 +81,7 @@ def obtener_asistencia_por_gestion(request, id):
             "year": gestion.anio_escolar,
             "gestion": gestion.anio_escolar,
             "asistencia": asistencias.count(),
+            "mensaje": "salio todo bien"
         })
 
     return Response(resultado, status=status.HTTP_200_OK)
