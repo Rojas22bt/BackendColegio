@@ -1,9 +1,18 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from BaseDatosColegio.models import Asistencia, Gestion
+from BaseDatosColegio.models import Asistencia, Gestion,Bitacora
 from django.db.models.functions import ExtractYear
 from Evaluaciones.serializers import AsistenciaSerializers
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
 
 @api_view(['POST'])
 def obtener_asistencia_de_alumnos(request):
@@ -40,8 +49,17 @@ def obtener_asistencia_de_alumnos(request):
 @api_view(['POST'])
 def crear_asistencia(request):
     serializer = AsistenciaSerializers(data = request.data)
+    usuario = request.data.get("alumno")
     if serializer.is_valid():
         serializer.save()
+        
+        # Bitácora
+        ip = get_client_ip(request)
+        Bitacora.objects.create(
+            usuario=usuario,
+            accion="Inicio de sesión",
+            ip=ip
+        )
         return Response(serializer.data,status=status.HTTP_201_CREATED)
     
     return Response({
