@@ -40,11 +40,12 @@ class LicenciaSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Licencia
-        fields = ['id','descripcion','fecha','imagen','alumno','nombre_usuario']
+        fields = ['id', 'descripcion', 'fecha', 'imagen', 'alumno', 'nombre_usuario']
         
     def get_nombre_usuario(self, obj):
-        if obj.alumno and hasattr(obj.alumno, 'nombre'):
-            return obj.alumno.nombre
+        # Verificamos que exista todo para evitar errores
+        if obj.alumno and obj.alumno.alumno and hasattr(obj.alumno.alumno, 'nombre'):
+            return obj.alumno.alumno.nombre
         return None
 
     
