@@ -37,16 +37,24 @@ class NotificacionSerializers(serializers.ModelSerializer):
     
 class LicenciaSerializers(serializers.ModelSerializer):
     nombre_usuario = serializers.SerializerMethodField()
+    ci_usuario = serializers.SerializerMethodField()
 
     class Meta:
         model = Licencia
-        fields = ['id', 'descripcion', 'fecha', 'imagen', 'alumno', 'nombre_usuario']
+        fields = ['id', 'descripcion', 'fecha', 'imagen', 'alumno', 'nombre_usuario', 'ci_usuario']
         
     def get_nombre_usuario(self, obj):
-        # Verificamos que exista todo para evitar errores
-        if obj.alumno and obj.alumno.alumno and hasattr(obj.alumno.alumno, 'nombre'):
+        try:
             return obj.alumno.alumno.nombre
-        return None
+        except AttributeError:
+            return None
+
+    def get_ci_usuario(self, obj):
+        try:
+            return obj.alumno.alumno.ci
+        except AttributeError:
+            return None
+
 
     
     
