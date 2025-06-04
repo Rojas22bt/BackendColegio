@@ -43,6 +43,9 @@ class LicenciaSerializers(serializers.ModelSerializer):
         fields = ['id','descripcion','fecha','imagen','alumno','nombre_usuario']
         
     def get_nombre_usuario(self, obj):
-        return obj.usuario.nombre if obj.alumno else None
+        if obj.alumno and hasattr(obj.alumno, 'nombre'):
+            return obj.alumno.nombre
+        return None
+
     
     
